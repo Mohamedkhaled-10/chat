@@ -1,6 +1,7 @@
 const username = localStorage.getItem("username");
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
+const mediaInput = document.getElementById("mediaInput");
 
 if (!username) {
   alert("يرجى تسجيل الدخول أولاً");
@@ -11,7 +12,7 @@ document.getElementById("userDisplay").textContent = username;
 
 let replyData = null;
 
-// إرسال الرسالة
+// إرسال الرسالة النصية
 function sendMessage() {
   const msg = input.value.trim();
   if (msg === '') return;
@@ -21,7 +22,8 @@ function sendMessage() {
     sender: username,
     text: msg,
     time: Date.now(),
-    replyTo: replyData
+    replyTo: replyData || null,
+    media: null
   });
 
   input.value = '';
@@ -30,40 +32,74 @@ function sendMessage() {
   input.focus(); // عدم إغلاق الكيبورد
 }
 
+// إرسال صورة أو فيديو
+function uploadMedia(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const mediaURL = e.target.result;
+    db.ref("messages").push({
+      id: Date.now(),
+      sender: username,
+      text: '',
+      time: Date.now(),
+      replyTo: replyData || null,
+      media: {
+        type: file.type.startsWith('image') ? 'image' : 'video',
+        url: mediaURL
+      }
+    });
+    replyData = null;
+    removeReplyBox();
+  };
+  reader.readAsDataURL(file);
+}
+
 // استقبال الرسائل
-db.ref("messages").on("child_added", snapshot => {
-  const data = snapshot.val();
+function renderMessage(data, key) {
   const msgDiv = document.createElement("div");
   msgDiv.classList.add("message");
   if (data.sender === username) msgDiv.classList.add("me");
-
-  msgDiv.dataset.key = snapshot.key; // مهم لحذف الرسالة لاحقًا
+  msgDiv.dataset.key = key;
 
   let content = "";
 
-  // لو فيه رد على رسالة
   if (data.replyTo) {
     content += `
       <div class="reply-box">
         <strong>${data.replyTo.sender}:</strong>
-        <div style="font-size:13px; color:#bbb;">${data.replyTo.text.slice(0, 60)}</div>
+        <div style="font-size:13px; color:#bbb;">${(data.replyTo.text || '').slice(0, 60)}</div>
       </div>`;
   }
 
-  content += `<strong>${data.sender}:</strong> ${data.text}`;
+  content += `<strong>${data.sender}:</strong> `;
+
+  if (data.media) {
+    if (data.media.type === 'image') {
+      content += `<div class="media"><img src="${data.media.url}" alt="صورة" onclick="openFullScreenMedia('${data.media.url}')"></div>`;
+    } else if (data.media.type === 'video') {
+      content += `<div class="media"><video controls src="${data.media.url}" onclick="event.stopPropagation()"></video></div>`;
+    }
+  } else {
+    content += `${data.text}`;
+  }
+
   content += `<br><small>${new Date(data.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>`;
 
   if (data.sender === username) {
-    content += `<i class="fas fa-trash-alt" onclick="deleteMessage('${snapshot.key}')" style="float:left; margin-top:5px; color:#888; cursor:pointer;"></i>`;
+    content += `<i class="fas fa-trash-alt" onclick="deleteMessage('${key}')" style="float:left; margin-top:5px; color:#888; cursor:pointer;"></i>`;
   }
 
   msgDiv.innerHTML = content;
-
-  // تفعيل السحب للرد
   enableSwipeToReply(msgDiv, data);
-
   chatBox.appendChild(msgDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+db.ref("messages").on("child_added", snapshot => {
+  renderMessage(snapshot.val(), snapshot.key);
 });
 
 // حذف الرسالة من قاعدة البيانات
@@ -73,11 +109,9 @@ function deleteMessage(key) {
   }
 }
 
-// عند حذف رسالة من القاعدة → احذفها من الواجهة فورًا عند الجميع
 db.ref("messages").on("child_removed", snapshot => {
   const deletedKey = snapshot.key;
   const allMessages = chatBox.querySelectorAll('.message');
-
   allMessages.forEach(el => {
     if (el.dataset.key === deletedKey) {
       el.remove();
@@ -85,10 +119,8 @@ db.ref("messages").on("child_removed", snapshot => {
   });
 });
 
-// عرض مربع الرد
 function showReplyBox(name, text) {
   removeReplyBox();
-
   const replyDiv = document.createElement("div");
   replyDiv.id = "replyBox";
   replyDiv.innerHTML = `
@@ -107,27 +139,22 @@ function showReplyBox(name, text) {
     justify-content: space-between;
     align-items: center;
   `;
-
   input.parentNode.insertBefore(replyDiv, input);
 }
 
-// إزالة مربع الرد
 function removeReplyBox() {
   const existing = document.getElementById("replyBox");
   if (existing) existing.remove();
   replyData = null;
 }
 
-// تفعيل السحب لليمين للرد (زي واتساب)
 function enableSwipeToReply(element, data) {
   let startX = 0;
   let moved = false;
-
   element.addEventListener('touchstart', e => {
     startX = e.touches[0].clientX;
     element.style.transition = 'none';
   });
-
   element.addEventListener('touchmove', e => {
     const deltaX = e.touches[0].clientX - startX;
     if (deltaX > 0) {
@@ -135,20 +162,38 @@ function enableSwipeToReply(element, data) {
       moved = true;
     }
   });
-
   element.addEventListener('touchend', e => {
     const deltaX = e.changedTouches[0].clientX - startX;
-
     if (deltaX > 70 && moved) {
       replyData = {
         sender: data.sender,
-        text: data.text
+        text: data.text || '[ميديا]'
       };
-      showReplyBox(data.sender, data.text);
+      showReplyBox(data.sender, data.text || '[ميديا]');
     }
-
     element.style.transition = 'transform 0.3s ease';
     element.style.transform = 'translateX(0)';
     moved = false;
   });
+}
+
+function openFullScreenMedia(url) {
+  const viewer = document.createElement('div');
+  viewer.style = `
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  `;
+  const img = document.createElement('img');
+  img.src = url;
+  img.style = 'max-width: 90vw; max-height: 90vh; border-radius: 10px;';
+  viewer.appendChild(img);
+  viewer.addEventListener('click', () => viewer.remove());
+  document.body.appendChild(viewer);
 }
