@@ -6,14 +6,23 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>تسجيل حساب جديد</h2>
-  <input type="text" id="username" placeholder="اسم المستخدم">
-  <input type="password" id="password" placeholder="كلمة المرور">
-  <button onclick="register()">تسجيل</button>
+  <div class="container">
+    <h2>✍️ إنشاء حساب جديد</h2>
+    <input type="text" id="username" placeholder="اسم المستخدم">
+    <input type="password" id="password" placeholder="كلمة المرور">
+    <button onclick="register()">تسجيل</button>
 
-  <p>هل لديك حساب؟ <a href="index.html">سجّل الدخول</a></p>
+    <p>هل لديك حساب؟ <a href="index.html">سجّل الدخول</a></p>
+  </div>
 
+  <!-- ✅ Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <!-- ✅ إعداد Firebase الخاص بك -->
   <script src="firebase-config.js"></script>
+
+  <!-- ✅ كود التسجيل -->
   <script src="register.js"></script>
 </body>
 </html>
