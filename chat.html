@@ -9,7 +9,12 @@
 <body>
 
   <!-- ✅ رأس الغرفة -->
-  <header>💬 أهلاً <span id="userDisplay"></span></header>
+  <header>
+    💬 أهلاً <span id="userDisplay"></span>
+    <span class="exit-btn" onclick="logout()" title="تسجيل الخروج">
+      <i class="fas fa-sign-out-alt"></i>
+    </span>
+  </header>
 
   <!-- ✅ صندوق الرسائل -->
   <div id="chat-box"></div>
@@ -31,6 +36,16 @@
 
   <!-- ✅ كود الدردشة -->
   <script src="chat.js"></script>
+
+  <!-- ✅ دالة تسجيل الخروج -->
+  <script>
+    function logout() {
+      if (confirm("هل تريد تسجيل الخروج؟")) {
+        localStorage.removeItem("username");
+        window.location.href = "index.html";
+      }
+    }
+  </script>
 
 </body>
 </html>
