@@ -11,25 +11,22 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Cairo', sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
   color: #eee;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
 /* الرأس */
 header {
-  background: rgba(20, 20, 20, 0.9);
+  background: #1e1e1e;
   padding: 15px 20px;
   text-align: center;
   font-size: 20px;
   color: #00d0ff;
   font-weight: bold;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.6);
   position: relative;
   z-index: 10;
-  backdrop-filter: blur(6px);
 }
 
 header .fa-comment-dots {
@@ -52,12 +49,18 @@ header .fa-comment-dots {
   color: #ff4c4c;
 }
 
+/* هيكل التطبيق */
+body {
+  display: flex;
+  flex-direction: column;
+}
+
 /* الدردشة */
 #chat-box {
   flex: 1;
   overflow-y: auto;
-  background: linear-gradient(to bottom, #0f0f0f, #181818);
-  padding: 20px 10px 100px;
+  background: #121212;
+  padding: 20px 10px 80px; /* مساحة تحت للكيبورد */
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -78,7 +81,6 @@ header .fa-comment-dots {
   animation: fadeInUp 0.3s ease;
   cursor: pointer;
   align-self: flex-start;
-  transition: background 0.2s;
 }
 
 .message.me {
@@ -119,7 +121,7 @@ header .fa-comment-dots {
 
 /* أدوات الكتابة */
 .chat-controls {
-  background: rgba(26, 26, 26, 0.95);
+  background: #1a1a1a;
   padding: 10px;
   display: flex;
   gap: 10px;
@@ -129,7 +131,6 @@ header .fa-comment-dots {
   left: 0;
   right: 0;
   z-index: 20;
-  backdrop-filter: blur(5px);
 }
 
 .chat-controls input {
@@ -198,26 +199,6 @@ header .fa-comment-dots {
   }
 }
 
-/* مربع الرد المصغر داخل الرسائل */
-.reply-box {
-  background: rgba(0, 208, 255, 0.1);
-  border-right: 4px solid #00d0ff;
-  padding: 6px 10px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  color: #aad;
-  font-size: 13px;
-  text-align: right;
-  max-width: 100%;
-  word-wrap: break-word;
-}
-
-.message.me .reply-box {
-  border-right: none;
-  border-left: 4px solid #007bff;
-  text-align: left;
-}
-
 /* استجابة */
 @media (max-width: 480px) {
   header {
@@ -237,4 +218,22 @@ header .fa-comment-dots {
   .message {
     font-size: 14px;
   }
+}
+.reply-box {
+  background: rgba(0, 208, 255, 0.1);
+  border-right: 4px solid #00d0ff;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  color: #aad;
+  font-size: 13px;
+  text-align: right;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.message.me .reply-box {
+  border-right: none;
+  border-left: 4px solid #007bff;
+  text-align: left;
 }
