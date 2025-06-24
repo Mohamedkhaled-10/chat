@@ -4,7 +4,7 @@ const input = document.getElementById("message-input");
 
 if (!username) {
   alert("يرجى تسجيل الدخول أولاً");
-  window.location.href = "login.html";
+  window.location.href = "index.html";
 }
 
 document.getElementById("userDisplay").textContent = username;
