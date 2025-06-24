@@ -3,25 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <title>تسجيل الدخول</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- رابط ملف التنسيق -->
+  <link rel="stylesheet" href="regestier.css">
+  <!-- أيقونات Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <div class="container">
     <h2>🔐 تسجيل الدخول</h2>
-    <input type="text" id="username" placeholder="اسم المستخدم">
-    <input type="password" id="password" placeholder="كلمة المرور">
+
+    <!-- حقل اسم المستخدم -->
+    <div class="input-icon">
+      <input type="text" id="username" placeholder="اسم المستخدم">
+      <i class="fas fa-user"></i>
+    </div>
+
+    <!-- حقل كلمة المرور -->
+    <div class="input-icon">
+      <input type="password" id="password" placeholder="كلمة المرور">
+      <i class="fas fa-lock"></i>
+    </div>
+
+    <!-- زر الدخول -->
     <button onclick="login()">دخول</button>
+
+    <!-- رابط التسجيل -->
     <p>لا تملك حساب؟ <a href="register.html">سجّل الآن</a></p>
   </div>
 
-  <!-- ✅ أضف Firebase SDK أولاً -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <!-- ✅ ثم ملف إعداد firebase الخاص بك -->
+  <!-- إعدادات Firebase -->
   <script src="firebase-config.js"></script>
 
-  <!-- ✅ ثم كود تسجيل الدخول -->
+  <!-- كود تسجيل الدخول -->
   <script src="login.js"></script>
 </body>
 </html>
