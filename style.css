@@ -148,3 +148,10 @@ header .fa-comment-dots {
     font-size: 14px;
   }
 }
+.message {
+  cursor: pointer;
+}
+.message:hover {
+  background-color: #2a2a2a;
+}
+
