@@ -206,3 +206,12 @@ header .fa-comment-dots {
     font-size: 14px;
   }
 }
+.reply-box {
+  font-size: 13px;
+  color: #bbb;
+  border-right: 3px solid #00d0ff;
+  padding-right: 8px;
+  margin-bottom: 6px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+}
