@@ -1,141 +1,150 @@
-/* إعدادات عامة */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   direction: rtl;
-  background: #121212;
-  color: #eee;
-  font-family: 'Cairo', sans-serif;
   margin: 0;
   padding: 0;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* الحاوية الأساسية */
-.container {
-  background: #1e1e1e;
-  padding: 25px 20px;
-  border-radius: 16px;
-  width: 95%;
-  max-width: 450px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
-  text-align: center;
-}
-
-/* العنوان */
-h2 {
-  margin-bottom: 20px;
-  color: #00d0ff;
-  font-size: 22px;
-}
-
-/* الحقول */
-input {
-  width: 100%;
-  padding: 12px;
-  margin: 12px 0;
-  border: none;
-  border-radius: 10px;
-  background: #2c2c2c;
-  color: #fff;
-  font-size: 16px;
-  outline: none;
-  transition: 0.3s;
-}
-
-input:focus {
-  background: #3a3a3a;
-}
-
-/* الزر */
-button {
-  width: 100%;
-  padding: 14px;
-  background: #00d0ff;
-  border: none;
-  border-radius: 10px;
-  color: #000;
-  font-weight: bold;
-  font-size: 17px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.3s ease;
-}
-
-button:hover {
-  background: #00aacc;
-}
-
-/* الروابط */
-a {
-  color: #00d0ff;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-/* صندوق الرسائل */
-#chat-box {
-  height: 320px;
-  overflow-y: auto;
-  background: #181818;
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #333;
+  font-family: 'Cairo', sans-serif;
+  background: #0e0e0e;
+  color: #eee;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* كل رسالة */
-#chat-box div {
-  margin: 6px 0;
+/* رأس الغرفة */
+header {
+  background: #1a1a1a;
+  padding: 15px 20px;
+  text-align: center;
+  font-size: 18px;
+  color: #00d0ff;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+header .fa-comment-dots {
+  margin-left: 10px;
+}
+
+/* صندوق الدردشة */
+#chat-box {
+  flex: 1;
+  padding: 15px 10px;
+  overflow-y: auto;
+  background: #141414;
+  display: flex;
+  flex-direction: column;
+}
+
+/* الرسالة */
+.message {
   background: #292929;
+  color: #eee;
   padding: 10px 14px;
+  margin: 6px 0;
   border-radius: 10px;
-  display: inline-block;
   max-width: 80%;
-  word-wrap: break-word;
   font-size: 15px;
+  line-height: 1.4;
+  position: relative;
+  word-wrap: break-word;
+}
+
+.message.me {
+  background: #00d0ff;
+  color: #000;
+  align-self: flex-end;
+}
+
+/* الوقت */
+.message small {
+  display: block;
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 5px;
+  text-align: left;
 }
 
 /* أدوات الدردشة */
 .chat-controls {
+  background: #1a1a1a;
+  padding: 10px;
   display: flex;
-  gap: 8px;
-  flex-direction: row;
+  gap: 10px;
+  border-top: 1px solid #333;
 }
 
 .chat-controls input {
   flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #2b2b2b;
+  color: #fff;
   font-size: 15px;
-  padding: 10px;
+}
+
+.chat-controls input:focus {
+  outline: none;
+  background: #3a3a3a;
 }
 
 .chat-controls button {
-  width: 90px;
-  font-size: 15px;
+  background: #00d0ff;
+  border: none;
+  border-radius: 10px;
+  padding: 0 20px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #000;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* استجابة الشاشة الصغيرة */
+.chat-controls button:hover {
+  background: #00aacc;
+}
+
+/* زر الخروج */
+.exit-btn {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.exit-btn:hover {
+  color: #ff4c4c;
+}
+
+/* استجابة للشاشات الصغيرة */
 @media (max-width: 480px) {
-  h2 {
-    font-size: 20px;
+  header {
+    font-size: 16px;
+    padding: 12px;
   }
 
-  .container {
-    padding: 20px 15px;
-  }
-
-  input, button {
-    font-size: 15px;
+  .chat-controls input {
+    font-size: 14px;
   }
 
   .chat-controls button {
-    width: 80px;
+    font-size: 16px;
+    padding: 0 14px;
   }
 
-  #chat-box {
-    height: 250px;
+  .message {
+    font-size: 14px;
   }
 }
