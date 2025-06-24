@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+
+* {
+  box-sizing: border-box;
+  font-family: 'Cairo', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #eee;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 30px 25px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+
+.container h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #00d0ff;
+}
+
+.container input {
+  width: 100%;
+  padding: 12px 40px 12px 12px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 8px;
+  background: #2c2c2c;
+  color: #fff;
+  font-size: 15px;
+  position: relative;
+}
+
+.container input:focus {
+  outline: none;
+  background: #3a3a3a;
+}
+
+.container input::placeholder {
+  color: #aaa;
+}
+
+.container button {
+  width: 100%;
+  padding: 12px;
+  background: #00d0ff;
+  color: #000;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.container button:hover {
+  background: #00aacc;
+}
+
+.container p {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.container a {
+  color: #00d0ff;
+  text-decoration: none;
+}
+
+.container a:hover {
+  text-decoration: underline;
+}
+
+/* الأيقونات */
+.input-icon {
+  position: relative;
+}
+
+.input-icon i {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+/* أنيميشن */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* موبايل */
+@media (max-width: 480px) {
+  .container {
+    padding: 25px 20px;
+  }
+
+  .container h2 {
+    font-size: 20px;
+  }
+
+  .container button {
+    font-size: 15px;
+  }
+}
