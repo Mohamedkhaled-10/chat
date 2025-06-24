@@ -9,7 +9,7 @@ if (!username) {
 
 document.getElementById("userDisplay").textContent = username;
 
-let replyData = null; // لتخزين بيانات الرسالة المُراد الرد عليها
+let replyData = null;
 
 // إرسال الرسالة
 function sendMessage() {
@@ -25,6 +25,7 @@ function sendMessage() {
   });
 
   input.value = '';
+  input.focus(); // ✅ يمنع إغلاق الكيبورد
   replyData = null;
   removeReplyBox();
 }
@@ -38,25 +39,26 @@ db.ref("messages").on("child_added", snapshot => {
 
   let content = '';
 
-  // لو فيه رد
+  // ✅ عرض مربع الرد إن وجد
   if (data.replyTo) {
     content += `
-      <div style="font-size:13px; color:#aaa; border-right: 3px solid #00d0ff; padding-right:6px; margin-bottom:6px;">
-        <strong>${data.replyTo.sender}</strong>: ${data.replyTo.text}
+      <div class="reply-box">
+        <strong>${data.replyTo.sender}:</strong> ${data.replyTo.text}
       </div>`;
   }
 
+  // ✅ نص الرسالة والوقت
   content += `<strong>${data.sender}:</strong> ${data.text}`;
-  content += `<br><small style="font-size: 11px; color: #aaa;">${new Date(data.time).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</small>`;
+  content += `<br><small>${new Date(data.time).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</small>`;
 
-  // زر الحذف لو الرسالة بتاعتك
+  // ✅ زر الحذف لو الرسالة بتاعتي
   if (data.sender === username) {
     content += `<i class="fas fa-trash-alt" onclick="deleteMessage('${snapshot.key}')" style="float:left; margin-top:5px; color:#888; cursor:pointer;"></i>`;
   }
 
   msgDiv.innerHTML = content;
 
-  // لو ضغطت على الرسالة، جهزها للرد
+  // ✅ الرد على رسالة عند الضغط
   msgDiv.onclick = () => {
     replyData = {
       sender: data.sender,
@@ -76,28 +78,24 @@ function deleteMessage(key) {
   }
 }
 
-// عرض مربع الرد
+// عرض مربع الرد فوق حقل الكتابة
 function showReplyBox(name, text) {
   removeReplyBox();
 
   const replyDiv = document.createElement("div");
   replyDiv.id = "replyBox";
-  replyDiv.style = "padding: 8px 12px; background:#222; border-right:4px solid #00d0ff; margin-bottom:10px; font-size:14px; border-radius:6px;";
-  replyDiv.innerHTML = `<strong>رداً على ${name}:</strong> ${text} 
-    <span onclick="removeReplyBox()" style="float:left; cursor:pointer; color:#f55;"><i class="fas fa-times"></i></span>`;
-  
+  replyDiv.className = "reply-box";
+  replyDiv.innerHTML = `
+    <strong>رداً على ${name}:</strong> ${text}
+    <span onclick="removeReplyBox()" style="float:left; cursor:pointer; color:#f55;"><i class="fas fa-times"></i></span>
+  `;
+
   input.parentNode.insertBefore(replyDiv, input);
 }
 
-// إزالة مربع الرد
+// إخفاء مربع الرد
 function removeReplyBox() {
   const existing = document.getElementById("replyBox");
   if (existing) existing.remove();
   replyData = null;
-}
-if (data.replyTo) {
-  const replyDiv = document.createElement("div");
-  replyDiv.className = "reply-box";
-  replyDiv.innerHTML = `<strong>${data.replyTo.sender}:</strong> ${data.replyTo.text.slice(0, 50)}`;
-  msgDiv.appendChild(replyDiv);
 }
