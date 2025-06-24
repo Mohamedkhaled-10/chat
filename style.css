@@ -14,9 +14,11 @@ html, body {
   background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
   color: #eee;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-/* الرأس */
+/* رأس الصفحة */
 header {
   background: #1e1e1e;
   padding: 15px 20px;
@@ -49,18 +51,12 @@ header .fa-comment-dots {
   color: #ff4c4c;
 }
 
-/* هيكل التطبيق */
-body {
-  display: flex;
-  flex-direction: column;
-}
-
-/* الدردشة */
+/* صندوق المحادثة */
 #chat-box {
   flex: 1;
   overflow-y: auto;
   background: #121212;
-  padding: 20px 10px 80px; /* مساحة تحت للكيبورد */
+  padding: 20px 10px 90px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -105,7 +101,6 @@ body {
   border-right: 3px solid #00d0ff;
   padding-right: 8px;
   margin-bottom: 6px;
-  opacity: 0.85;
   background: rgba(255,255,255,0.03);
   border-radius: 6px;
 }
@@ -187,7 +182,26 @@ body {
   font-size: 14px;
 }
 
-/* الرسالة تظهر بتأثير */
+/* الرد داخل الرسالة */
+.reply-box {
+  background: rgba(0, 208, 255, 0.1);
+  border-right: 4px solid #00d0ff;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  color: #aad;
+  font-size: 13px;
+  text-align: right;
+  word-wrap: break-word;
+}
+
+.message.me .reply-box {
+  border-right: none;
+  border-left: 4px solid #007bff;
+  text-align: left;
+}
+
+/* أنيميشن */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -199,7 +213,7 @@ body {
   }
 }
 
-/* استجابة */
+/* استجابة للشاشات الصغيرة */
 @media (max-width: 480px) {
   header {
     font-size: 17px;
@@ -218,22 +232,4 @@ body {
   .message {
     font-size: 14px;
   }
-}
-.reply-box {
-  background: rgba(0, 208, 255, 0.1);
-  border-right: 4px solid #00d0ff;
-  padding: 6px 10px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  color: #aad;
-  font-size: 13px;
-  text-align: right;
-  max-width: 100%;
-  word-wrap: break-word;
-}
-
-.message.me .reply-box {
-  border-right: none;
-  border-left: 4px solid #007bff;
-  text-align: left;
 }
