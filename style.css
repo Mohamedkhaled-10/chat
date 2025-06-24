@@ -219,3 +219,21 @@ body {
     font-size: 14px;
   }
 }
+.reply-box {
+  background: rgba(0, 208, 255, 0.1);
+  border-right: 4px solid #00d0ff;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  color: #aad;
+  font-size: 13px;
+  text-align: right;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.message.me .reply-box {
+  border-right: none;
+  border-left: 4px solid #007bff;
+  text-align: left;
+}
