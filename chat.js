@@ -95,3 +95,9 @@ function removeReplyBox() {
   if (existing) existing.remove();
   replyData = null;
 }
+if (data.replyTo) {
+  const replyDiv = document.createElement("div");
+  replyDiv.className = "reply-box";
+  replyDiv.innerHTML = `<strong>${data.replyTo.sender}:</strong> ${data.replyTo.text.slice(0, 50)}`;
+  msgDiv.appendChild(replyDiv);
+}
