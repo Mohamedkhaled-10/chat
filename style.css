@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
 
 * {
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -9,57 +11,95 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Cairo', sans-serif;
-  background: #0e0e0e;
+  background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
   color: #eee;
   height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* رأس الغرفة */
 header {
-  background: #1a1a1a;
+  background: #1e1e1e;
   padding: 15px 20px;
   text-align: center;
-  font-size: 18px;
+  font-size: 20px;
   color: #00d0ff;
   font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.6);
   position: relative;
 }
 
 header .fa-comment-dots {
-  margin-left: 10px;
+  margin-left: 8px;
 }
 
-/* صندوق الدردشة */
+/* زر الخروج */
+.exit-btn {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.exit-btn:hover {
+  color: #ff4c4c;
+}
+
+/* الدردشة */
 #chat-box {
   flex: 1;
-  padding: 15px 10px;
   overflow-y: auto;
-  background: #141414;
+  background: #121212;
+  padding: 20px 10px 10px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
-/* الرسالة */
+/* الرسائل */
 .message {
-  background: #292929;
-  color: #eee;
-  padding: 10px 14px;
-  margin: 6px 0;
-  border-radius: 10px;
   max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 16px 16px 0 16px;
+  background: #2e2e2e;
+  color: #eee;
   font-size: 15px;
-  line-height: 1.4;
+  line-height: 1.5;
   position: relative;
   word-wrap: break-word;
+  animation: fadeInUp 0.3s ease;
+  cursor: pointer;
 }
 
 .message.me {
   background: #00d0ff;
   color: #000;
   align-self: flex-end;
+  border-radius: 16px 16px 16px 0;
+}
+
+.message:hover {
+  background-color: #3a3a3a;
+}
+
+.message.me:hover {
+  background-color: #00b8e6;
+}
+
+/* الرد المضمن */
+.message .reply-box {
+  font-size: 13px;
+  color: #bbb;
+  border-right: 3px solid #00d0ff;
+  padding-right: 8px;
+  margin-bottom: 6px;
+  opacity: 0.85;
 }
 
 /* الوقت */
@@ -71,10 +111,10 @@ header .fa-comment-dots {
   text-align: left;
 }
 
-/* أدوات الدردشة */
+/* أدوات الكتابة */
 .chat-controls {
   background: #1a1a1a;
-  padding: 10px;
+  padding: 12px 10px;
   display: flex;
   gap: 10px;
   border-top: 1px solid #333;
@@ -88,6 +128,7 @@ header .fa-comment-dots {
   background: #2b2b2b;
   color: #fff;
   font-size: 15px;
+  transition: 0.3s ease;
 }
 
 .chat-controls input:focus {
@@ -113,25 +154,42 @@ header .fa-comment-dots {
   background: #00aacc;
 }
 
-/* زر الخروج */
-.exit-btn {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #888;
-  font-size: 18px;
+/* مربع الرد */
+#replyBox {
+  background: #222;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  border-right: 4px solid #00d0ff;
+  font-size: 14px;
+  border-radius: 8px;
+  color: #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#replyBox i {
   cursor: pointer;
+  color: #f55;
+  font-size: 14px;
 }
 
-.exit-btn:hover {
-  color: #ff4c4c;
+/* الرسالة تظهر بتأثير */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* استجابة للشاشات الصغيرة */
+/* استجابة */
 @media (max-width: 480px) {
   header {
-    font-size: 16px;
+    font-size: 17px;
     padding: 12px;
   }
 
@@ -148,10 +206,3 @@ header .fa-comment-dots {
     font-size: 14px;
   }
 }
-.message {
-  cursor: pointer;
-}
-.message:hover {
-  background-color: #2a2a2a;
-}
-
