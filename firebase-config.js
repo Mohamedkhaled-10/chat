@@ -1,7 +1,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyDMMu-QNPL6RlGYdGGQVJLzZqCC_hsLa8I",
   authDomain: "night-ac2a0.firebaseapp.com",
-  databaseURL: "https://night-ac2a0-default-rtdb.firebaseio.com", // ← أضف هذا السطر
+  databaseURL: "https://night-ac2a0-default-rtdb.europe-west1.firebasedatabase.app", // ✅ الصحيح
   projectId: "night-ac2a0",
   storageBucket: "night-ac2a0.firebasestorage.app",
   messagingSenderId: "202751732517",
