@@ -3,26 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <title>تسجيل مستخدم</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- تصميم موحد -->
+  <link rel="stylesheet" href="regestier.css">
+  <!-- أيقونات Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <div class="container">
     <h2>✍️ إنشاء حساب جديد</h2>
-    <input type="text" id="username" placeholder="اسم المستخدم">
-    <input type="password" id="password" placeholder="كلمة المرور">
+
+    <!-- حقل اسم المستخدم -->
+    <div class="input-icon">
+      <input type="text" id="username" placeholder="اسم المستخدم">
+      <i class="fas fa-user-plus"></i>
+    </div>
+
+    <!-- حقل كلمة المرور -->
+    <div class="input-icon">
+      <input type="password" id="password" placeholder="كلمة المرور">
+      <i class="fas fa-lock"></i>
+    </div>
+
+    <!-- زر التسجيل -->
     <button onclick="register()">تسجيل</button>
 
+    <!-- رابط الرجوع لتسجيل الدخول -->
     <p>هل لديك حساب؟ <a href="index.html">سجّل الدخول</a></p>
   </div>
 
-  <!-- ✅ Firebase SDK -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <!-- ✅ إعداد Firebase الخاص بك -->
+  <!-- إعدادات Firebase -->
   <script src="firebase-config.js"></script>
 
-  <!-- ✅ كود التسجيل -->
+  <!-- كود التسجيل -->
   <script src="register.js"></script>
 </body>
 </html>
