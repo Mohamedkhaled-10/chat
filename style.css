@@ -1,51 +1,63 @@
+/* إعدادات عامة */
 body {
   direction: rtl;
-  background: #1a1a1a;
+  background: #121212;
   color: #eee;
   font-family: 'Cairo', sans-serif;
   margin: 0;
   padding: 0;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
 }
 
+/* الحاوية الأساسية */
 .container {
-  background: #2c2c2c;
-  padding: 30px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.6);
+  background: #1e1e1e;
+  padding: 25px 20px;
+  border-radius: 16px;
+  width: 95%;
+  max-width: 450px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
   text-align: center;
 }
 
+/* العنوان */
 h2 {
   margin-bottom: 20px;
   color: #00d0ff;
+  font-size: 22px;
 }
 
+/* الحقول */
 input {
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
+  padding: 12px;
+  margin: 12px 0;
   border: none;
-  border-radius: 8px;
-  background: #444;
+  border-radius: 10px;
+  background: #2c2c2c;
   color: #fff;
   font-size: 16px;
+  outline: none;
+  transition: 0.3s;
 }
 
+input:focus {
+  background: #3a3a3a;
+}
+
+/* الزر */
 button {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   background: #00d0ff;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   color: #000;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 17px;
   cursor: pointer;
   margin-top: 10px;
   transition: background 0.3s ease;
@@ -55,40 +67,75 @@ button:hover {
   background: #00aacc;
 }
 
+/* الروابط */
 a {
   color: #00d0ff;
   text-decoration: none;
+  font-weight: bold;
 }
 
+/* صندوق الرسائل */
 #chat-box {
-  height: 300px;
+  height: 320px;
   overflow-y: auto;
-  background: #1f1f1f;
-  border-radius: 8px;
+  background: #181818;
+  border-radius: 10px;
   padding: 10px;
-  text-align: right;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #333;
+  display: flex;
+  flex-direction: column;
 }
 
+/* كل رسالة */
 #chat-box div {
-  margin: 5px 0;
-  background: #333;
-  padding: 8px 12px;
-  border-radius: 8px;
+  margin: 6px 0;
+  background: #292929;
+  padding: 10px 14px;
+  border-radius: 10px;
   display: inline-block;
   max-width: 80%;
   word-wrap: break-word;
+  font-size: 15px;
 }
 
+/* أدوات الدردشة */
 .chat-controls {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  flex-direction: row;
 }
 
 .chat-controls input {
   flex: 1;
+  font-size: 15px;
+  padding: 10px;
 }
 
 .chat-controls button {
-  width: 100px;
+  width: 90px;
+  font-size: 15px;
+}
+
+/* استجابة الشاشة الصغيرة */
+@media (max-width: 480px) {
+  h2 {
+    font-size: 20px;
+  }
+
+  .container {
+    padding: 20px 15px;
+  }
+
+  input, button {
+    font-size: 15px;
+  }
+
+  .chat-controls button {
+    width: 80px;
+  }
+
+  #chat-box {
+    height: 250px;
+  }
 }
