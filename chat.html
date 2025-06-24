@@ -6,23 +6,28 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h2>💬 أهلاً <span id="userDisplay"></span>!</h2>
-    <div id="chat-box"></div>
-    <div class="chat-controls">
-      <input type="text" id="message-input" placeholder="اكتب رسالة...">
-      <button onclick="sendMessage()">إرسال</button>
-    </div>
+
+  <!-- ✅ رأس الغرفة -->
+  <header>💬 أهلاً <span id="userDisplay"></span></header>
+
+  <!-- ✅ صندوق الرسائل -->
+  <div id="chat-box"></div>
+
+  <!-- ✅ أدوات الدردشة -->
+  <div class="chat-controls">
+    <input type="text" id="message-input" placeholder="اكتب رسالة...">
+    <button onclick="sendMessage()">إرسال</button>
   </div>
 
-  <!-- ✅ لازم دول يجوا الأول -->
+  <!-- ✅ Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <!-- ✅ بعد كده ملف الإعداد -->
+  <!-- ✅ إعداد Firebase -->
   <script src="firebase-config.js"></script>
 
-  <!-- ✅ ثم كود الدردشة -->
+  <!-- ✅ كود الدردشة -->
   <script src="chat.js"></script>
+
 </body>
 </html>
