@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>غرفة الدردشة</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>💬 أهلاً <span id="userDisplay"></span>!</h2>
+    <div id="chat-box"></div>
+    <div class="chat-controls">
+      <input type="text" id="message-input" placeholder="اكتب رسالة...">
+      <button onclick="sendMessage()">إرسال</button>
+    </div>
+  </div>
+
+  <script src="firebase-config.js"></script>
+  <script src="chat.js"></script>
+</body>
+</html>
