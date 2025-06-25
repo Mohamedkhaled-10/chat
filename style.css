@@ -299,10 +299,30 @@ header .fa-comment-dots {
   }
 
   .media-menu {
-    right: 20px;
-    transform: translateY(-8px);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(100%);
+    background: #1e1e1e;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+    z-index: 999;
+    padding: 12px 0;
+    max-height: 35vh; /* حوالي ربع الشاشة */
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+  }
+
+  .media-menu.show {
+    transform: translateY(0);
   }
 }
+
 
 .message img,
 .message video {
