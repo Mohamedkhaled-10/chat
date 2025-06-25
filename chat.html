@@ -4,34 +4,34 @@
   <meta charset="UTF-8">
   <title>the vegetables</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <!-- ✅ FontAwesome بدون مشاكل CORS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
   <header>
-  <span class="settings-btn" onclick="document.getElementById('bgInput').click()" title="تغيير الخلفية">
-    <i class="fas fa-cog"></i>
-  </span>
-  💬 أهلاً <span id="userDisplay"></span>
-  <span class="exit-btn" onclick="logout()" title="تسجيل الخروج">
-    <i class="fas fa-sign-out-alt"></i>
-  </span>
-  <input type="file" id="bgInput" accept="image/*" hidden>
-</header>
+    <span class="settings-btn" onclick="document.getElementById('bgInput').click()" title="تغيير الخلفية">
+      <i class="fas fa-cog"></i>
+    </span>
+    💬 أهلاً <span id="userDisplay"></span>
+    <span class="exit-btn" onclick="logout()" title="تسجيل الخروج">
+      <i class="fas fa-sign-out-alt"></i>
+    </span>
+    <input type="file" id="bgInput" accept="image/*" hidden>
+  </header>
 
   <div id="updatePopup" class="popup-overlay">
-  <div class="popup-box">
-    <h3>✨ جديد في التحديث:</h3>
-    <ul>
-      <li>📌 اضغط مطولًا على الرسالة للتفاعل</li>
-      <li>↩️ اسحب الرسالة لليمين للرد عليها</li>
-      <li>🎨 يمكنك تغيير خلفية الدردشة من أيقونة الإعدادات</li>
-    </ul>
-    <button onclick="closePopup()">حسنًا</button>
+    <div class="popup-box">
+      <h3>✨ جديد في التحديث:</h3>
+      <ul>
+        <li>📌 اضغط مطولًا على الرسالة للتفاعل</li>
+        <li>↩️ اسحب الرسالة لليمين للرد عليها</li>
+        <li>🎨 يمكنك تغيير خلفية الدردشة من أيقونة الإعدادات</li>
+      </ul>
+      <button onclick="closePopup()">حسنًا</button>
+    </div>
   </div>
-</div>
-
 
   <div id="chat-box"></div>
 
@@ -51,8 +51,11 @@
     <button onclick="sendMessage()" title="إرسال"><i class="fas fa-paper-plane"></i></button>
   </div>
 
+  <!-- ✅ مكتبات Firebase القديمة (v8) -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+
   <script src="firebase-config.js"></script>
   <script src="chat.js"></script>
 
@@ -63,54 +66,39 @@
         window.location.href = "index.html";
       }
     }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedBg = localStorage.getItem("chatBackground");
+      if (savedBg) {
+        document.getElementById("chat-box").style.backgroundImage = `url(${savedBg})`;
+        document.getElementById("chat-box").style.backgroundSize = "cover";
+        document.getElementById("chat-box").style.backgroundPosition = "center";
+      }
+
+      const seenUpdate = localStorage.getItem("seenUpdate_1");
+      if (!seenUpdate) {
+        document.getElementById("updatePopup").style.display = "flex";
+      }
+    });
+
+    document.getElementById("bgInput").addEventListener("change", function () {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const imageData = e.target.result;
+        document.getElementById("chat-box").style.backgroundImage = `url(${imageData})`;
+        document.getElementById("chat-box").style.backgroundSize = "cover";
+        document.getElementById("chat-box").style.backgroundPosition = "center";
+        localStorage.setItem("chatBackground", imageData);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function closePopup() {
+      document.getElementById("updatePopup").style.display = "none";
+      localStorage.setItem("seenUpdate_1", "true");
+    }
   </script>
-  <script>
-  function logout() {
-    if (confirm("هل تريد تسجيل الخروج؟")) {
-      localStorage.removeItem("username");
-      window.location.href = "index.html";
-    }
-  }
-
-  // تحميل الخلفية المحفوظة
-  window.addEventListener("DOMContentLoaded", () => {
-    const savedBg = localStorage.getItem("chatBackground");
-    if (savedBg) {
-      document.getElementById("chat-box").style.backgroundImage = `url(${savedBg})`;
-      document.getElementById("chat-box").style.backgroundSize = "cover";
-      document.getElementById("chat-box").style.backgroundPosition = "center";
-    }
-  });
-
-  // تغيير الخلفية عند اختيار صورة
-  document.getElementById("bgInput").addEventListener("change", function () {
-    const file = this.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const imageData = e.target.result;
-      document.getElementById("chat-box").style.backgroundImage = `url(${imageData})`;
-      document.getElementById("chat-box").style.backgroundSize = "cover";
-      document.getElementById("chat-box").style.backgroundPosition = "center";
-      localStorage.setItem("chatBackground", imageData);
-    };
-    reader.readAsDataURL(file);
-  });
-</script>
-<script> 
-window.addEventListener("DOMContentLoaded", () => {
-  const seenUpdate = localStorage.getItem("seenUpdate_1");
-  if (!seenUpdate) {
-    document.getElementById("updatePopup").style.display = "flex";
-  }
-});
-
-function closePopup() {
-  document.getElementById("updatePopup").style.display = "none";
-  localStorage.setItem("seenUpdate_1", "true");
-}
-
-</script>
 </body>
 </html>
