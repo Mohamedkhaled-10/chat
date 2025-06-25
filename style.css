@@ -279,25 +279,6 @@ header .fa-comment-dots {
 }
 
 @media (max-width: 480px) {
-  header {
-    font-size: 17px;
-    padding: 12px;
-  }
-
-  .chat-controls input {
-    font-size: 14px;
-  }
-
-  .chat-controls button {
-    font-size: 16px;
-    width: 42px;
-    height: 42px;
-  }
-
-  .message {
-    font-size: 14px;
-  }
-
   .media-menu {
     position: fixed;
     bottom: 0;
@@ -313,15 +294,22 @@ header .fa-comment-dots {
     min-width: 100%;
     z-index: 999;
     padding: 12px 0;
-    max-height: 35vh; /* حوالي ربع الشاشة */
+    max-height: 35vh;
     overflow-y: auto;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, visibility 0.3s ease;
+    
+    /* الإخفاء التام */
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .media-menu.show {
     transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
   }
 }
+
 
 
 .message img,
