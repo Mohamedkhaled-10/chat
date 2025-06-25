@@ -238,12 +238,12 @@ function toggleMediaMenu() {
   if (menu.classList.contains('show')) {
     menu.classList.remove('show');
   } else {
-    const button = document.querySelector('.media-btn');
-    const rect = button.getBoundingClientRect();
-    menu.style.bottom = `${window.innerHeight - rect.top + 10}px`;
+    // إزالة أي تعديل ديناميكي على bottom
+    menu.style.bottom = '55px'; // ثابت لأعلى
     menu.classList.add('show');
   }
 }
+
 
 // ✅ إغلاق القائمة لو ضغطت بره
 window.addEventListener('click', (e) => {
