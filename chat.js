@@ -234,7 +234,15 @@ if ('Notification' in window && firebase.messaging.isSupported()) {
 
 // ✅ إظهار قائمة الميديا عند الضغط
 function toggleMediaMenu() {
-  document.querySelector('.media-menu').classList.toggle('show');
+  const menu = document.querySelector('.media-menu');
+  if (menu.classList.contains('show')) {
+    menu.classList.remove('show');
+  } else {
+    const button = document.querySelector('.media-btn');
+    const rect = button.getBoundingClientRect();
+    menu.style.bottom = `${window.innerHeight - rect.top + 10}px`;
+    menu.classList.add('show');
+  }
 }
 
 // ✅ إغلاق القائمة لو ضغطت بره
