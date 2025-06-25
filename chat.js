@@ -73,31 +73,31 @@ function renderMessage(data, key) {
   let content = "";
 
   if (data.replyTo) {
-    content += 
+    content += `
       <div class="reply-box">
         <strong>${data.replyTo.sender}:</strong>
         <div style="font-size:13px; color:#bbb;">${(data.replyTo.text || '').slice(0, 60)}</div>
-      </div>;
+      </div>`;
   }
 
-  content += <div class="sender-name">${data.sender}</div>;
+  content += `<div class="sender-name">${data.sender}</div>`;
 
   if (data.media) {
     if (data.media.type === 'image') {
-      content += <div class="media"><img src="${data.media.url}" alt="صورة" onclick="openFullScreenMedia('${data.media.url}')"></div>;
+      content += `<div class="media"><img src="${data.media.url}" alt="صورة" onclick="openFullScreenMedia('${data.media.url}')"></div>`;
     } else if (data.media.type === 'video') {
-      content += <div class="media"><video controls src="${data.media.url}" onclick="event.stopPropagation()"></video></div>;
+      content += `<div class="media"><video controls src="${data.media.url}" onclick="event.stopPropagation()"></video></div>`;
     } else {
-      content += <div class="media"><a href="${data.media.url}" download target="_blank" style="color:#00d0ff;">📄 ${data.media.name || 'تحميل ملف'}</a></div>;
+      content += `<div class="media"><a href="${data.media.url}" download target="_blank" style="color:#00d0ff;">📄 ${data.media.name || 'تحميل ملف'}</a></div>`;
     }
   } else {
-    content += ${data.text};
+    content += `${data.text}`;
   }
 
-  content += <br><small>${new Date(data.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>;
+  content += `<br><small>${new Date(data.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>`;
 
   if (data.sender === username) {
-    content += <i class="fas fa-trash-alt" onclick="deleteMessage('${key}')" style="float:left; margin-top:5px; color:#888; cursor:pointer;"></i>;
+    content += `<i class="fas fa-trash-alt" onclick="deleteMessage('${key}')" style="float:left; margin-top:5px; color:#888; cursor:pointer;"></i>`;
   }
 
   // تفاعلات
@@ -108,8 +108,8 @@ function renderMessage(data, key) {
       if (!reactionCounts[emoji]) reactionCounts[emoji] = 0;
       reactionCounts[emoji]++;
     }
-    const reactionsHTML = Object.entries(reactionCounts).map(([emoji, count]) => <span>${emoji} ${count}</span>).join(' ');
-    content += <div class="reactions">${reactionsHTML}</div>;
+    const reactionsHTML = Object.entries(reactionCounts).map(([emoji, count]) => `<span>${emoji} ${count}</span>`).join(' ');
+    content += `<div class="reactions">${reactionsHTML}</div>`;
   }
 
   msgDiv.innerHTML = content;
@@ -172,7 +172,7 @@ function showReactionPopup(element, key) {
 }
 
 function addReaction(msgKey, emoji) {
-  const userReactionRef = db.ref(messages/${msgKey}/reactions/${username});
+  const userReactionRef = db.ref(`messages/${msgKey}/reactions/${username}`);
   userReactionRef.set(emoji);
 }
 
@@ -181,7 +181,7 @@ db.ref("messages").on("child_added", snapshot => {
 });
 
 db.ref("messages").on("child_changed", snapshot => {
-  const msgEl = chatBox.querySelector([data-key='${snapshot.key}']);
+  const msgEl = chatBox.querySelector(`[data-key='${snapshot.key}']`);
   if (msgEl) msgEl.remove();
   renderMessage(snapshot.val(), snapshot.key);
 });
@@ -206,10 +206,10 @@ function showReplyBox(name, text) {
   removeReplyBox();
   const replyDiv = document.createElement("div");
   replyDiv.id = "replyBox";
-  replyDiv.innerHTML = 
+  replyDiv.innerHTML = `
     <strong>رداً على ${name}:</strong> ${text}
     <span onclick="removeReplyBox()" style="float:left; cursor:pointer; color:#f55;"><i class="fas fa-times"></i></span>
-  ;
+  `;
   input.parentNode.insertBefore(replyDiv, input);
 }
 
@@ -229,7 +229,7 @@ function enableSwipeToReply(element, data) {
   element.addEventListener('touchmove', e => {
     const deltaX = e.touches[0].clientX - startX;
     if (deltaX > 0) {
-      element.style.transform = translateX(${deltaX}px);
+      element.style.transform = `translateX(${deltaX}px)`;
       moved = true;
     }
   });
@@ -250,7 +250,7 @@ function enableSwipeToReply(element, data) {
 
 function openFullScreenMedia(url) {
   const viewer = document.createElement('div');
-  viewer.style = 
+  viewer.style = `
     position: fixed;
     top: 0; left: 0;
     width: 100vw;
@@ -260,7 +260,7 @@ function openFullScreenMedia(url) {
     align-items: center;
     justify-content: center;
     z-index: 1000;
-  ;
+  `;
   const img = document.createElement('img');
   img.src = url;
   img.style = 'max-width: 90vw; max-height: 90vh; border-radius: 10px;';
