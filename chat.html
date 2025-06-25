@@ -46,6 +46,18 @@
       }
     }
   </script>
+<!-- ✅ تسجيل Firebase Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+      .then(reg => {
+        console.log('✅ تم تسجيل Service Worker:', reg.scope);
+      })
+      .catch(err => {
+        console.error('❌ فشل تسجيل Service Worker:', err);
+      });
+  }
+</script>
 
 </body>
 </html>
