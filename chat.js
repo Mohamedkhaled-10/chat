@@ -91,33 +91,7 @@ function renderMessage(data, key) {
       content += <div class="media"><a href="${data.media.url}" download target="_blank" style="color:#00d0ff;">📄 ${data.media.name || 'تحميل ملف'}</a></div>;
     }
   } else {
-    const msgText = (data.text || '');
-    const parsedText = msgText.replace(
-      /(https?:\/\/[^\s]+)/g,
-      '<a href="$1" target="_blank" style="color:#00d0ff;">$1</a>'
-    );
-    content += <div class="message-text">${parsedText}</div>;
-
-    const urlMatch = msgText.match(/https?:\/\/[^\s]+/);
-    if (urlMatch) {
-      const url = urlMatch[0];
-      fetch(https://jsonlink.io/api/extract?url=${encodeURIComponent(url)})
-        .then(res => res.json())
-        .then(meta => {
-          const preview = document.createElement("div");
-          preview.className = "link-preview";
-          preview.style = "border:1px solid #ccc; border-radius:8px; margin-top:5px; padding:10px; background:#111;";
-
-          preview.innerHTML = 
-            ${meta.image ? <img src="${meta.image}" style="max-width:100%; border-radius:6px;"> : ''}
-            <div style="font-weight:bold; margin-top:5px;">${meta.title || url}</div>
-            <div style="font-size:13px; color:#aaa;">${meta.description || ''}</div>
-          ;
-
-          msgDiv.appendChild(preview);
-        })
-        .catch(err => console.log("❌ معاينة الرابط فشلت:", err));
-    }
+    content += ${data.text};
   }
 
   content += <br><small>${new Date(data.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>;
@@ -126,6 +100,7 @@ function renderMessage(data, key) {
     content += <i class="fas fa-trash-alt" onclick="deleteMessage('${key}')" style="float:left; margin-top:5px; color:#888; cursor:pointer;"></i>;
   }
 
+  // تفاعلات
   if (data.reactions) {
     const reactionCounts = {};
     for (const user in data.reactions) {
@@ -137,9 +112,10 @@ function renderMessage(data, key) {
     content += <div class="reactions">${reactionsHTML}</div>;
   }
 
-  msgDiv.innerHTML += content;
+  msgDiv.innerHTML = content;
 
   msgDiv.addEventListener("contextmenu", e => e.preventDefault());
+
   msgDiv.addEventListener("touchstart", e => {
     msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 500);
   });
@@ -157,7 +133,6 @@ function renderMessage(data, key) {
   chatBox.appendChild(msgDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
-
 
 function showReactionPopup(element, key) {
   const existing = document.querySelector(".reaction-popup");
