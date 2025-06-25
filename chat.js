@@ -3,7 +3,6 @@ const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
 const mediaInput = document.getElementById("mediaInput");
 
-// التحقق من تسجيل الدخول
 if (!username) {
   alert("يرجى تسجيل الدخول أولاً");
   window.location.href = "index.html";
@@ -13,7 +12,6 @@ document.getElementById("userDisplay").textContent = username;
 
 let replyData = null;
 
-// إرسال رسالة نصية
 function sendMessage() {
   const msg = input.value.trim();
   if (msg === '') return;
@@ -24,7 +22,8 @@ function sendMessage() {
     text: msg,
     time: Date.now(),
     replyTo: replyData || null,
-    media: null
+    media: null,
+    reactions: {} // ← إضافة التفاعلات
   });
 
   input.value = '';
@@ -33,13 +32,11 @@ function sendMessage() {
   input.focus();
 }
 
-// رفع ميديا
 function uploadSpecificMedia(type) {
   mediaInput.accept = type;
   mediaInput.click();
 }
 
-// إرسال ميديا (صورة / فيديو / ملف)
 function uploadMedia(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -57,7 +54,8 @@ function uploadMedia(event) {
         type: file.type.startsWith('image') ? 'image' : file.type.startsWith('video') ? 'video' : 'file',
         url: mediaURL,
         name: file.name
-      }
+      },
+      reactions: {} // ← إضافة التفاعلات
     });
     replyData = null;
     removeReplyBox();
@@ -65,7 +63,6 @@ function uploadMedia(event) {
   reader.readAsDataURL(file);
 }
 
-// عرض الرسائل
 function renderMessage(data, key) {
   const msgDiv = document.createElement("div");
   msgDiv.classList.add("message");
@@ -83,7 +80,6 @@ function renderMessage(data, key) {
   }
 
   content += `<div class="sender-name">${data.sender}</div>`;
-
 
   if (data.media) {
     if (data.media.type === 'image') {
@@ -103,13 +99,41 @@ function renderMessage(data, key) {
     content += `<i class="fas fa-trash-alt" onclick="deleteMessage('${key}')" style="float:left; margin-top:5px; color:#888; cursor:pointer;"></i>`;
   }
 
+  content += `
+    <div class="reaction-bar">
+      <span onclick="addReaction('${key}', '😂')">😂</span>
+      <span onclick="addReaction('${key}', '❤️')">❤️</span>
+      <span onclick="addReaction('${key}', '👍')">👍</span>
+    </div>
+  `;
+
+  if (data.reactions) {
+    const reactionCounts = {};
+    Object.values(data.reactions).forEach(r => {
+      reactionCounts[r] = (reactionCounts[r] || 0) + 1;
+    });
+    const reactionsHTML = Object.entries(reactionCounts).map(([emoji, count]) => `<span>${emoji} ${count}</span>`).join(' ');
+    content += `<div class="reactions">${reactionsHTML}</div>`;
+  }
+
   msgDiv.innerHTML = content;
   enableSwipeToReply(msgDiv, data);
   chatBox.appendChild(msgDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+function addReaction(msgKey, emoji) {
+  const userReactionRef = db.ref(`messages/${msgKey}/reactions/${username}`);
+  userReactionRef.set(emoji);
+}
+
 db.ref("messages").on("child_added", snapshot => {
+  renderMessage(snapshot.val(), snapshot.key);
+});
+
+db.ref("messages").on("child_changed", snapshot => {
+  const msgEl = chatBox.querySelector(`[data-key='${snapshot.key}']`);
+  if (msgEl) msgEl.remove();
   renderMessage(snapshot.val(), snapshot.key);
 });
 
@@ -196,7 +220,6 @@ function openFullScreenMedia(url) {
   document.body.appendChild(viewer);
 }
 
-// ✅ تسجيل Service Worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/firebase-messaging-sw.js')
     .then(registration => {
@@ -207,7 +230,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// ✅ إعداد الإشعارات باستخدام FCM
 if ('Notification' in window && firebase.messaging.isSupported()) {
   const messaging = firebase.messaging();
 
@@ -233,20 +255,16 @@ if ('Notification' in window && firebase.messaging.isSupported()) {
   });
 }
 
-// ✅ إظهار قائمة الميديا عند الضغط
 function toggleMediaMenu() {
   const menu = document.querySelector('.media-menu');
   if (menu.classList.contains('show')) {
     menu.classList.remove('show');
   } else {
-    // إزالة أي تعديل ديناميكي على bottom
-    menu.style.bottom = '55px'; // ثابت لأعلى
+    menu.style.bottom = '55px';
     menu.classList.add('show');
   }
 }
 
-
-// ✅ إغلاق القائمة لو ضغطت بره
 window.addEventListener('click', (e) => {
   const menu = document.querySelector('.media-menu');
   const button = document.querySelector('.media-btn');
