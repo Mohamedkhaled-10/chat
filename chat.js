@@ -1,9 +1,11 @@
+// chat.js
+import { db, getMessaging, isSupported } from './firebase-config.js';
+
 const username = localStorage.getItem("username");
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
 const mediaInput = document.getElementById("mediaInput");
 
-// التحقق من تسجيل الدخول
 if (!username) {
   alert("يرجى تسجيل الدخول أولاً");
   window.location.href = "index.html";
@@ -158,7 +160,6 @@ function renderMessage(data, key) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-
 function showReactionPopup(element, key) {
   const existing = document.querySelector(".reaction-popup");
   if (existing) existing.remove();
@@ -304,28 +305,34 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-if ('Notification' in window && firebase.messaging.isSupported()) {
-  const messaging = firebase.messaging();
+if ('Notification' in window) {
+  isSupported().then((supported) => {
+    if (supported) {
+      const messaging = getMessaging();
 
-  messaging.getToken({
-    vapidKey: "BEYdjZSgrbnqsQbu2bfEE89MaEGnksqizHuTNTocbdz9FVeaZruiO0FdeDAzKLN_QYjOZ1TccWNOA_R5ZfS9U0c"
-  }).then(currentToken => {
-    if (currentToken) {
-      db.ref("tokens/" + username).set(currentToken);
-      console.log("🔐 Token:", currentToken);
+      messaging.getToken({
+        vapidKey: "BEYdjZSgrbnqsQbu2bfEE89MaEGnksqizHuTNTocbdz9FVeaZruiO0FdeDAzKLN_QYjOZ1TccWNOA_R5ZfS9U0c"
+      }).then(currentToken => {
+        if (currentToken) {
+          db.ref("tokens/" + username).set(currentToken);
+          console.log("🔐 Token:", currentToken);
+        } else {
+          console.warn("🔔 لم يتم منح صلاحية الإشعارات.");
+        }
+      }).catch(err => {
+        console.error("❌ خطأ في التوكن:", err);
+      });
+
+      messaging.onMessage(payload => {
+        const { title, body } = payload.notification;
+        new Notification(title, {
+          body,
+          icon: "/icon.png"
+        });
+      });
     } else {
-      console.warn("🔔 لم يتم منح صلاحية الإشعارات.");
+      console.warn("💡 المتصفح لا يدعم Firebase Messaging.");
     }
-  }).catch(err => {
-    console.error("❌ خطأ في التوكن:", err);
-  });
-
-  messaging.onMessage(payload => {
-    const { title, body } = payload.notification;
-    new Notification(title, {
-      body,
-      icon: "/icon.png"
-    });
   });
 }
 
