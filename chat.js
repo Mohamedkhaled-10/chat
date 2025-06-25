@@ -1,3 +1,4 @@
+// chat.js
 const username = localStorage.getItem("username");
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
@@ -12,7 +13,6 @@ document.getElementById("userDisplay").textContent = username;
 
 let replyData = null;
 
-// إرسال الرسالة النصية
 function sendMessage() {
   const msg = input.value.trim();
   if (msg === '') return;
@@ -29,10 +29,9 @@ function sendMessage() {
   input.value = '';
   replyData = null;
   removeReplyBox();
-  input.focus(); // عدم إغلاق الكيبورد
+  input.focus();
 }
 
-// إرسال صورة أو فيديو
 function uploadMedia(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -57,7 +56,6 @@ function uploadMedia(event) {
   reader.readAsDataURL(file);
 }
 
-// استقبال الرسائل
 function renderMessage(data, key) {
   const msgDiv = document.createElement("div");
   msgDiv.classList.add("message");
@@ -102,13 +100,6 @@ db.ref("messages").on("child_added", snapshot => {
   renderMessage(snapshot.val(), snapshot.key);
 });
 
-// حذف الرسالة من قاعدة البيانات
-function deleteMessage(key) {
-  if (confirm("هل تريد حذف هذه الرسالة؟")) {
-    db.ref("messages/" + key).remove();
-  }
-}
-
 db.ref("messages").on("child_removed", snapshot => {
   const deletedKey = snapshot.key;
   const allMessages = chatBox.querySelectorAll('.message');
@@ -118,6 +109,12 @@ db.ref("messages").on("child_removed", snapshot => {
     }
   });
 });
+
+function deleteMessage(key) {
+  if (confirm("هل تريد حذف هذه الرسالة؟")) {
+    db.ref("messages/" + key).remove();
+  }
+}
 
 function showReplyBox(name, text) {
   removeReplyBox();
@@ -196,4 +193,30 @@ function openFullScreenMedia(url) {
   viewer.appendChild(img);
   viewer.addEventListener('click', () => viewer.remove());
   document.body.appendChild(viewer);
+}
+
+// ✅ إشعارات Firebase Cloud Messaging
+if ('Notification' in window && firebase.messaging.isSupported()) {
+  const messaging = firebase.messaging();
+
+  messaging.getToken({
+    vapidKey: "ضع_مفتاح_VAPID_هنا"
+  }).then(currentToken => {
+    if (currentToken) {
+      db.ref("tokens/" + username).set(currentToken);
+      console.log("🔐 Token:", currentToken);
+    } else {
+      console.warn("🔔 لم يتم منح صلاحية الإشعارات.");
+    }
+  }).catch(err => {
+    console.error("❌ خطأ في التوكن:", err);
+  });
+
+  messaging.onMessage(payload => {
+    const { title, body } = payload.notification;
+    new Notification(title, {
+      body,
+      icon: "/icon.png"
+    });
+  });
 }
