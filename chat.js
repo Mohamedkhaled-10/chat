@@ -82,7 +82,8 @@ function renderMessage(data, key) {
       </div>`;
   }
 
-  content += `<strong>${data.sender}:</strong> `;
+  content += `<div class="sender-name">${data.sender}</div>`;
+
 
   if (data.media) {
     if (data.media.type === 'image') {
