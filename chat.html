@@ -52,5 +52,40 @@
       }
     }
   </script>
+  <script>
+  function logout() {
+    if (confirm("هل تريد تسجيل الخروج؟")) {
+      localStorage.removeItem("username");
+      window.location.href = "index.html";
+    }
+  }
+
+  // تحميل الخلفية المحفوظة
+  window.addEventListener("DOMContentLoaded", () => {
+    const savedBg = localStorage.getItem("chatBackground");
+    if (savedBg) {
+      document.getElementById("chat-box").style.backgroundImage = `url(${savedBg})`;
+      document.getElementById("chat-box").style.backgroundSize = "cover";
+      document.getElementById("chat-box").style.backgroundPosition = "center";
+    }
+  });
+
+  // تغيير الخلفية عند اختيار صورة
+  document.getElementById("bgInput").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const imageData = e.target.result;
+      document.getElementById("chat-box").style.backgroundImage = `url(${imageData})`;
+      document.getElementById("chat-box").style.backgroundSize = "cover";
+      document.getElementById("chat-box").style.backgroundPosition = "center";
+      localStorage.setItem("chatBackground", imageData);
+    };
+    reader.readAsDataURL(file);
+  });
+</script>
+
 </body>
 </html>
