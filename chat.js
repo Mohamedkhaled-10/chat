@@ -3,6 +3,7 @@ const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
 const mediaInput = document.getElementById("mediaInput");
 
+// التحقق من تسجيل الدخول
 if (!username) {
   alert("يرجى تسجيل الدخول أولاً");
   window.location.href = "index.html";
@@ -11,6 +12,72 @@ if (!username) {
 document.getElementById("userDisplay").textContent = username;
 
 let replyData = null;
+
+// ✅ قائمة الإعدادات
+const settingsIcon = document.createElement("span");
+settingsIcon.className = "settings-btn";
+settingsIcon.innerHTML = '<i class="fas fa-cog"></i>';
+settingsIcon.title = "الإعدادات";
+settingsIcon.style.cssText = "position:absolute; right:15px; top:50%; transform:translateY(-50%); font-size:18px; color:#999; cursor:pointer;";
+document.querySelector("header").appendChild(settingsIcon);
+
+const settingsMenu = document.createElement("div");
+settingsMenu.id = "settingsMenu";
+settingsMenu.style.cssText = "
+  position: absolute;
+  top: 60px;
+  right: 15px;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  display: none;
+  flex-direction: column;
+  z-index: 100;
+";
+settingsMenu.innerHTML = `
+  <label style="padding:10px 16px; color:#ccc; cursor:pointer; font-size:14px;">
+    🖼️ تغيير خلفية الدردشة
+    <input type="file" id="bgInput" accept="image/*" style="display:none;">
+  </label>
+`;
+document.body.appendChild(settingsMenu);
+
+settingsIcon.onclick = () => {
+  settingsMenu.style.display = settingsMenu.style.display === "flex" ? "none" : "flex";
+};
+
+document.addEventListener("click", e => {
+  if (!settingsMenu.contains(e.target) && !settingsIcon.contains(e.target)) {
+    settingsMenu.style.display = "none";
+  }
+});
+
+// ✅ تغيير خلفية الدردشة
+const bgInput = settingsMenu.querySelector("#bgInput");
+bgInput.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const bgUrl = ev.target.result;
+    chatBox.style.backgroundImage = `url('${bgUrl}')`;
+    chatBox.style.backgroundSize = "cover";
+    chatBox.style.backgroundPosition = "center";
+    localStorage.setItem("chat-bg", bgUrl);
+  };
+  reader.readAsDataURL(file);
+});
+
+// ✅ تحميل الخلفية المحفوظة
+const savedBg = localStorage.getItem("chat-bg");
+if (savedBg) {
+  chatBox.style.backgroundImage = `url('${savedBg}')`;
+  chatBox.style.backgroundSize = "cover";
+  chatBox.style.backgroundPosition = "center";
+}
+
 
 function sendMessage() {
   const msg = input.value.trim();
