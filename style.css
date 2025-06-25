@@ -318,3 +318,25 @@ header .fa-comment-dots {
 .message video {
   background: #000;
 }
+.sender-name {
+  font-weight: bold;
+  color: #00d0ff;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+.reply-box {
+  background: rgba(0, 208, 255, 0.08);
+  border-right: 4px solid #00d0ff;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  color: #aad;
+  font-size: 13px;
+  text-align: right;
+  word-wrap: break-word;
+}
+.message.me .reply-box {
+  border-right: none;
+  border-left: 4px solid #007bff;
+  text-align: left;
+}
