@@ -1,4 +1,3 @@
-const receiveSound = new Audio("/msg.mp3");
 const username = localStorage.getItem("username");
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
@@ -13,25 +12,6 @@ if (!username) {
 document.getElementById("userDisplay").textContent = username;
 
 let replyData = null;
-
-// إرسال الرسالة عند الضغط على Enter
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-// 🔍 البحث داخل الرسائل
-document.getElementById("searchInput").addEventListener("input", function () {
-  const query = this.value.toLowerCase();
-  const messages = chatBox.querySelectorAll(".message");
-
-  messages.forEach(msg => {
-    const text = msg.textContent.toLowerCase();
-    msg.style.display = text.includes(query) ? "block" : "none";
-  });
-});
 
 function sendMessage() {
   const msg = input.value.trim();
@@ -63,7 +43,7 @@ function uploadMedia(event) {
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = function (e) {
+  reader.onload = function(e) {
     const mediaURL = e.target.result;
     db.ref("messages").push({
       id: Date.now(),
@@ -120,6 +100,7 @@ function renderMessage(data, key) {
     content += `<i class="fas fa-trash-alt" onclick="deleteMessage('${key}')" style="float:left; margin-top:5px; color:#888; cursor:pointer;"></i>`;
   }
 
+  // تفاعلات
   if (data.reactions) {
     const reactionCounts = {};
     for (const user in data.reactions) {
@@ -134,14 +115,19 @@ function renderMessage(data, key) {
   msgDiv.innerHTML = content;
 
   msgDiv.addEventListener("contextmenu", e => e.preventDefault());
+
   msgDiv.addEventListener("touchstart", e => {
     msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 500);
   });
-  msgDiv.addEventListener("touchend", () => clearTimeout(msgDiv.longPressTimer));
+  msgDiv.addEventListener("touchend", e => {
+    clearTimeout(msgDiv.longPressTimer);
+  });
   msgDiv.addEventListener("mousedown", e => {
     msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 600);
   });
-  msgDiv.addEventListener("mouseup", () => clearTimeout(msgDiv.longPressTimer));
+  msgDiv.addEventListener("mouseup", e => {
+    clearTimeout(msgDiv.longPressTimer);
+  });
 
   enableSwipeToReply(msgDiv, data);
   chatBox.appendChild(msgDiv);
@@ -190,15 +176,8 @@ function addReaction(msgKey, emoji) {
   userReactionRef.set(emoji);
 }
 
-// ✅ تشغيل صوت عند استقبال رسالة من شخص آخر
 db.ref("messages").on("child_added", snapshot => {
-  const data = snapshot.val();
-
-  if (data.sender !== username) {
-    receiveSound.play().catch(() => {});
-  }
-
-  renderMessage(data, snapshot.key);
+  renderMessage(snapshot.val(), snapshot.key);
 });
 
 db.ref("messages").on("child_changed", snapshot => {
