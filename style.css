@@ -108,6 +108,16 @@ header .fa-comment-dots {
   text-align: left;
 }
 
+.sender-name {
+  font-weight: bold;
+  font-size: 14px;
+  color: #00d0ff; /* لون مميز */
+  margin-bottom: 6px;
+}
+.message.me .sender-name {
+  color: #003344; /* لون مميز مختلف للرسائل الخاصة بي */
+}
+
 .chat-controls {
   background: rgba(30,30,30,0.9);
   padding: 12px 16px;
