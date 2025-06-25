@@ -231,10 +231,10 @@ function showReplyBox(name, text) {
   removeReplyBox();
   const replyDiv = document.createElement("div");
   replyDiv.id = "replyBox";
-  replyDiv.innerHTML = `
+  replyDiv.innerHTML = 
     <strong>رداً على ${name}:</strong> ${text}
     <span onclick="removeReplyBox()" style="float:left; cursor:pointer; color:#f55;"><i class="fas fa-times"></i></span>
-  `;
+  ;
   input.parentNode.insertBefore(replyDiv, input);
 }
 
@@ -254,7 +254,7 @@ function enableSwipeToReply(element, data) {
   element.addEventListener('touchmove', e => {
     const deltaX = e.touches[0].clientX - startX;
     if (deltaX > 0) {
-      element.style.transform = `translateX(${deltaX}px)`;
+      element.style.transform = translateX(${deltaX}px);
       moved = true;
     }
   });
@@ -275,7 +275,7 @@ function enableSwipeToReply(element, data) {
 
 function openFullScreenMedia(url) {
   const viewer = document.createElement('div');
-  viewer.style = `
+  viewer.style = 
     position: fixed;
     top: 0; left: 0;
     width: 100vw;
@@ -285,7 +285,7 @@ function openFullScreenMedia(url) {
     align-items: center;
     justify-content: center;
     z-index: 1000;
-  `;
+  ;
   const img = document.createElement('img');
   img.src = url;
   img.style = 'max-width: 90vw; max-height: 90vh; border-radius: 10px;';
