@@ -10,11 +10,16 @@
 <body>
 
   <header>
-    💬 أهلاً <span id="userDisplay"></span>
-    <span class="exit-btn" onclick="logout()" title="تسجيل الخروج">
-      <i class="fas fa-sign-out-alt"></i>
-    </span>
-  </header>
+  <span class="settings-btn" onclick="document.getElementById('bgInput').click()" title="تغيير الخلفية">
+    <i class="fas fa-cog"></i>
+  </span>
+  💬 أهلاً <span id="userDisplay"></span>
+  <span class="exit-btn" onclick="logout()" title="تسجيل الخروج">
+    <i class="fas fa-sign-out-alt"></i>
+  </span>
+  <input type="file" id="bgInput" accept="image/*" hidden>
+</header>
+
 
   <div id="chat-box"></div>
 
