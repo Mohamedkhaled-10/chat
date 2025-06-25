@@ -14,11 +14,8 @@ firebase.initializeApp(firebaseConfig);
 // ✅ قاعدة البيانات
 const db = firebase.database();
 
-// ✅ الرسائل (معالجة آمنة لإصدارات غير مدعومة)
+// ✅ الرسائل (إذا كان مدعومًا على المتصفح)
 let messaging = null;
-
-try {
+if (firebase.messaging.isSupported()) {
   messaging = firebase.messaging();
-} catch (e) {
-  console.warn("⚠️ Firebase Messaging غير مدعوم في هذا المتصفح أو فشل التحميل:", e);
 }
