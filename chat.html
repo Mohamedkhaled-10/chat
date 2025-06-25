@@ -20,6 +20,18 @@
   <input type="file" id="bgInput" accept="image/*" hidden>
 </header>
 
+  <div id="updatePopup" class="popup-overlay">
+  <div class="popup-box">
+    <h3>✨ جديد في التحديث:</h3>
+    <ul>
+      <li>📌 اضغط مطولًا على الرسالة للتفاعل</li>
+      <li>↩️ اسحب الرسالة لليمين للرد عليها</li>
+      <li>🎨 يمكنك تغيير خلفية الدردشة من أيقونة الإعدادات</li>
+    </ul>
+    <button onclick="closePopup()">حسنًا</button>
+  </div>
+</div>
+
 
   <div id="chat-box"></div>
 
@@ -86,6 +98,19 @@
     reader.readAsDataURL(file);
   });
 </script>
+<script> 
+window.addEventListener("DOMContentLoaded", () => {
+  const seenUpdate = localStorage.getItem("seenUpdate_1");
+  if (!seenUpdate) {
+    document.getElementById("updatePopup").style.display = "flex";
+  }
+});
 
+function closePopup() {
+  document.getElementById("updatePopup").style.display = "none";
+  localStorage.setItem("seenUpdate_1", "true");
+}
+
+</script>
 </body>
 </html>
