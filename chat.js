@@ -24,7 +24,8 @@ function sendMessage() {
     time: Date.now(),
     replyTo: replyData || null,
     media: null,
-    reactions: {}
+    reactions: {},
+    readBy: { [username]: true } // حالة القراءة المبدئية للمُرسل
   });
 
   input.value = '';
@@ -56,7 +57,8 @@ function uploadMedia(event) {
         url: mediaURL,
         name: file.name
       },
-      reactions: {}
+      reactions: {},
+      readBy: { [username]: true }
     });
     replyData = null;
     removeReplyBox();
@@ -123,7 +125,10 @@ function renderMessage(data, key) {
   content += `<br><small>${new Date(data.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>`;
 
   if (data.sender === username) {
-    content += `<i class="fas fa-trash-alt" onclick="deleteMessage('${key}')" style="float:left; margin-top:5px; color:#888; cursor:pointer;"></i>`;
+    const readers = data.readBy ? Object.keys(data.readBy) : [];
+    const isSeen = readers.length > 1 || (readers.length === 1 && readers[0] !== username);
+    content += `<span style="float:left; font-size:12px; color:${isSeen ? '#4fc3f7' : '#888'};">${isSeen ? '✔✔' : '✔'}</span>`;
+    content += `<i class="fas fa-trash-alt" onclick="deleteMessage('${key}')" style="float:left; margin-top:5px; margin-left:10px; color:#888; cursor:pointer;"></i>`;
   }
 
   if (data.reactions) {
@@ -158,68 +163,26 @@ function renderMessage(data, key) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-
-function showReactionPopup(element, key) {
-  const existing = document.querySelector(".reaction-popup");
-  if (existing) existing.remove();
-
-  const rect = element.getBoundingClientRect();
-
-  const popup = document.createElement("div");
-  popup.className = "reaction-popup";
-  popup.style.position = "fixed";
-  popup.style.zIndex = 1000;
-  popup.style.top = (rect.top - 45) + "px";
-  popup.style.left = (rect.left + rect.width / 2 - 100) + "px";
-  popup.style.background = "#222";
-  popup.style.borderRadius = "20px";
-  popup.style.padding = "6px 12px";
-  popup.style.display = "flex";
-  popup.style.gap = "12px";
-  popup.style.boxShadow = "0 2px 6px rgba(0,0,0,0.5)";
-
-  ["😂", "❤️", "👍", "😮", "😢", "😡"].forEach(emoji => {
-    const btn = document.createElement("span");
-    btn.textContent = emoji;
-    btn.style.cursor = "pointer";
-    btn.style.fontSize = "20px";
-    btn.onclick = () => {
-      addReaction(key, emoji);
-      popup.remove();
-    };
-    popup.appendChild(btn);
-  });
-
-  document.body.appendChild(popup);
-  setTimeout(() => {
-    document.addEventListener("click", () => popup.remove(), { once: true });
-  }, 0);
-}
-
-function addReaction(msgKey, emoji) {
-  const userReactionRef = db.ref(`messages/${msgKey}/reactions/${username}`);
-  userReactionRef.set(emoji);
+// تحديث حالة القراءة عند استلام أي رسالة جديدة
+function markAsRead(key) {
+  db.ref(`messages/${key}/readBy/${username}`).set(true);
 }
 
 db.ref("messages").on("child_added", snapshot => {
-  renderMessage(snapshot.val(), snapshot.key);
+  const key = snapshot.key;
+  const data = snapshot.val();
+  renderMessage(data, key);
+  if (!data.readBy || !data.readBy[username]) markAsRead(key);
 });
 
 db.ref("messages").on("child_changed", snapshot => {
-  const msgEl = chatBox.querySelector(`[data-key='${snapshot.key}']`);
+  const key = snapshot.key;
+  const data = snapshot.val();
+  const msgEl = chatBox.querySelector(`[data-key='${key}']`);
   if (msgEl) msgEl.remove();
-  renderMessage(snapshot.val(), snapshot.key);
+  renderMessage(data, key);
 });
 
-db.ref("messages").on("child_removed", snapshot => {
-  const deletedKey = snapshot.key;
-  const allMessages = chatBox.querySelectorAll('.message');
-  allMessages.forEach(el => {
-    if (el.dataset.key === deletedKey) {
-      el.remove();
-    }
-  });
-});
 
 function deleteMessage(key) {
   if (confirm("هل تريد حذف هذه الرسالة؟")) {
