@@ -33,7 +33,13 @@ function sendMessage() {
   input.focus();
 }
 
-// إرسال ميديا (صورة / فيديو)
+// رفع ميديا
+function uploadSpecificMedia(type) {
+  mediaInput.accept = type;
+  mediaInput.click();
+}
+
+// إرسال ميديا (صورة / فيديو / ملف)
 function uploadMedia(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -48,8 +54,9 @@ function uploadMedia(event) {
       time: Date.now(),
       replyTo: replyData || null,
       media: {
-        type: file.type.startsWith('image') ? 'image' : 'video',
-        url: mediaURL
+        type: file.type.startsWith('image') ? 'image' : file.type.startsWith('video') ? 'video' : 'file',
+        url: mediaURL,
+        name: file.name
       }
     });
     replyData = null;
@@ -82,6 +89,8 @@ function renderMessage(data, key) {
       content += `<div class="media"><img src="${data.media.url}" alt="صورة" onclick="openFullScreenMedia('${data.media.url}')"></div>`;
     } else if (data.media.type === 'video') {
       content += `<div class="media"><video controls src="${data.media.url}" onclick="event.stopPropagation()"></video></div>`;
+    } else {
+      content += `<div class="media"><a href="${data.media.url}" download target="_blank" style="color:#00d0ff;">📄 ${data.media.name || 'تحميل ملف'}</a></div>`;
     }
   } else {
     content += `${data.text}`;
@@ -126,18 +135,6 @@ function showReplyBox(name, text) {
   replyDiv.innerHTML = `
     <strong>رداً على ${name}:</strong> ${text}
     <span onclick="removeReplyBox()" style="float:left; cursor:pointer; color:#f55;"><i class="fas fa-times"></i></span>
-  `;
-  replyDiv.style = `
-    padding: 8px 12px;
-    background: #222;
-    border-right: 4px solid #00d0ff;
-    margin-bottom: 10px;
-    font-size: 14px;
-    border-radius: 6px;
-    color: #ccc;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   `;
   input.parentNode.insertBefore(replyDiv, input);
 }
@@ -226,7 +223,6 @@ if ('Notification' in window && firebase.messaging.isSupported()) {
     console.error("❌ خطأ في التوكن:", err);
   });
 
-  // استقبال الإشعارات داخل الصفحة
   messaging.onMessage(payload => {
     const { title, body } = payload.notification;
     new Notification(title, {
@@ -235,3 +231,17 @@ if ('Notification' in window && firebase.messaging.isSupported()) {
     });
   });
 }
+
+// ✅ إظهار قائمة الميديا عند الضغط
+function toggleMediaMenu() {
+  document.querySelector('.media-menu').classList.toggle('show');
+}
+
+// ✅ إغلاق القائمة لو ضغطت بره
+window.addEventListener('click', (e) => {
+  const menu = document.querySelector('.media-menu');
+  const button = document.querySelector('.media-btn');
+  if (menu && !menu.contains(e.target) && !button.contains(e.target)) {
+    menu.classList.remove('show');
+  }
+});
