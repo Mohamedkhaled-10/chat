@@ -1,3 +1,4 @@
+<!-- ✅ index.html -->
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -21,10 +22,19 @@
 
   <!-- ✅ أدوات الدردشة -->
   <div class="chat-controls">
-    <input type="file" id="mediaInput" accept="image/*,video/*" onchange="uploadMedia(event)" hidden>
-    <button onclick="document.getElementById('mediaInput').click()" title="إرسال ميديا"><i class="fas fa-paperclip"></i></button>
+    <div class="media-menu-wrapper">
+      <button class="media-btn" onclick="toggleMediaMenu()" title="إرسال ميديا">
+        <i class="fas fa-paperclip"></i>
+      </button>
+      <div class="media-menu" id="mediaMenu">
+        <label onclick="chooseMedia('image/*')"><i class="fas fa-image"></i> صورة</label>
+        <label onclick="chooseMedia('video/*')"><i class="fas fa-video"></i> فيديو</label>
+        <label onclick="chooseMedia('*')"><i class="fas fa-file-alt"></i> ملف</label>
+      </div>
+    </div>
+    <input type="file" id="mediaInput" hidden>
     <input type="text" id="message-input" placeholder="اكتب رسالة...">
-    <button onclick="sendMessage()">إرسال</button>
+    <button onclick="sendMessage()" title="إرسال"><i class="fas fa-paper-plane"></i></button>
   </div>
 
   <!-- ✅ Firebase SDKs -->
@@ -46,18 +56,5 @@
       }
     }
   </script>
-<!-- ✅ تسجيل Firebase Service Worker -->
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-      .then(reg => {
-        console.log('✅ تم تسجيل Service Worker:', reg.scope);
-      })
-      .catch(err => {
-        console.error('❌ فشل تسجيل Service Worker:', err);
-      });
-  }
-</script>
-
 </body>
 </html>
