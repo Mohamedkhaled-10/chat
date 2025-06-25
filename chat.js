@@ -74,17 +74,19 @@ function renderMessage(data, key) {
 
   let content = "";
 
+  // ✅ اسم المرسل بلون مميز
+  content += `<div class="sender-name" style="font-weight:bold; color:#00d0ff; margin-bottom:4px;">${data.sender}</div>`;
+
+  // ✅ عرض مربع الرد لو موجود
   if (data.replyTo) {
     content += `
       <div class="reply-box">
         <strong>${data.replyTo.sender}:</strong>
-        <div style="font-size:13px; color:#bbb;">${(data.replyTo.text || '').slice(0, 60)}</div>
+        <div style="font-size:13px; color:#bbb;">${(data.replyTo.text || '[ميديا]').slice(0, 60)}</div>
       </div>`;
   }
 
-  content += `<div class="sender-name">${data.sender}</div>`;
-
-
+  // ✅ عرض الرسالة نفسها أو الميديا
   if (data.media) {
     if (data.media.type === 'image') {
       content += `<div class="media"><img src="${data.media.url}" alt="صورة" onclick="openFullScreenMedia('${data.media.url}')"></div>`;
@@ -94,11 +96,13 @@ function renderMessage(data, key) {
       content += `<div class="media"><a href="${data.media.url}" download target="_blank" style="color:#00d0ff;">📄 ${data.media.name || 'تحميل ملف'}</a></div>`;
     }
   } else {
-    content += `${data.text}`;
+    content += `<div style="margin-top:6px;">${data.text}</div>`;
   }
 
+  // ✅ عرض الوقت
   content += `<br><small>${new Date(data.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>`;
 
+  // ✅ أيقونة الحذف لو الرسالة بتاعتي
   if (data.sender === username) {
     content += `<i class="fas fa-trash-alt" onclick="deleteMessage('${key}')" style="float:left; margin-top:5px; color:#888; cursor:pointer;"></i>`;
   }
@@ -108,6 +112,7 @@ function renderMessage(data, key) {
   chatBox.appendChild(msgDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
+
 
 db.ref("messages").on("child_added", snapshot => {
   renderMessage(snapshot.val(), snapshot.key);
