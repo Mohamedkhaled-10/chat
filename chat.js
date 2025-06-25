@@ -113,7 +113,8 @@ function renderMessage(data, key) {
 
   msgDiv.innerHTML = content;
 
-  // تفعيل القائمة بالتفاعل عند الضغط المطول
+  msgDiv.addEventListener("contextmenu", e => e.preventDefault());
+
   msgDiv.addEventListener("touchstart", e => {
     msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 500);
   });
@@ -136,23 +137,26 @@ function showReactionPopup(element, key) {
   const existing = document.querySelector(".reaction-popup");
   if (existing) existing.remove();
 
+  const rect = element.getBoundingClientRect();
+
   const popup = document.createElement("div");
   popup.className = "reaction-popup";
-  popup.style.position = "absolute";
-  popup.style.zIndex = 100;
-  popup.style.top = (element.offsetTop - 40) + "px";
-  popup.style.left = (element.offsetLeft + 10) + "px";
+  popup.style.position = "fixed";
+  popup.style.zIndex = 1000;
+  popup.style.top = (rect.top - 45) + "px";
+  popup.style.left = (rect.left + rect.width / 2 - 100) + "px";
   popup.style.background = "#222";
   popup.style.borderRadius = "20px";
-  popup.style.padding = "5px 10px";
+  popup.style.padding = "6px 12px";
   popup.style.display = "flex";
-  popup.style.gap = "10px";
+  popup.style.gap = "12px";
   popup.style.boxShadow = "0 2px 6px rgba(0,0,0,0.5)";
 
   ["😂", "❤️", "👍", "😮", "😢", "😡"].forEach(emoji => {
     const btn = document.createElement("span");
     btn.textContent = emoji;
     btn.style.cursor = "pointer";
+    btn.style.fontSize = "20px";
     btn.onclick = () => {
       addReaction(key, emoji);
       popup.remove();
