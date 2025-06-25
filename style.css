@@ -184,7 +184,7 @@ header .fa-comment-dots {
 
 .media-menu {
   position: absolute;
-  top: 55px;
+  bottom: 55px;
   right: 0;
   background: #1e1e1e;
   border: 1px solid #333;
