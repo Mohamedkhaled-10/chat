@@ -200,7 +200,7 @@ if ('Notification' in window && firebase.messaging.isSupported()) {
   const messaging = firebase.messaging();
 
   messaging.getToken({
-    vapidKey: "ضع_مفتاح_VAPID_هنا"
+    vapidKey: "BEYdjZSgrbnqsQbu2bfEE89MaEGnksqizHuTNTocbdz9FVeaZruiO0FdeDAzKLN_QYjOZ1TccWNOA_R5ZfS9U0c"
   }).then(currentToken => {
     if (currentToken) {
       db.ref("tokens/" + username).set(currentToken);
