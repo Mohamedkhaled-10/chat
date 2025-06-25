@@ -195,7 +195,7 @@ header .fa-comment-dots {
 .media-menu {
   position: absolute;
   bottom: 55px;
-  right: 0;
+  right: 10;
   transform: translateY(-10px);
   background: #1e1e1e;
   border: 1px solid #333;
@@ -299,7 +299,7 @@ header .fa-comment-dots {
   }
 
   .media-menu {
-    right: 8px;
+    right: 10px;
     transform: translateY(-8px);
   }
 }
