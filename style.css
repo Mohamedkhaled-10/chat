@@ -186,6 +186,7 @@ header .fa-comment-dots {
   position: absolute;
   bottom: 55px;
   right: 0;
+  transform: translateY(-10px);
   background: #1e1e1e;
   border: 1px solid #333;
   border-radius: 12px;
@@ -195,6 +196,8 @@ header .fa-comment-dots {
   min-width: 140px;
   z-index: 999;
   padding: 8px 0;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .media-menu.show {
@@ -283,6 +286,11 @@ header .fa-comment-dots {
 
   .message {
     font-size: 14px;
+  }
+
+  .media-menu {
+    right: 8px;
+    transform: translateY(-8px);
   }
 }
 
