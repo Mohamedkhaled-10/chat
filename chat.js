@@ -23,7 +23,7 @@ function sendMessage() {
     time: Date.now(),
     replyTo: replyData || null,
     media: null,
-    reactions: {} // ← إضافة التفاعلات
+    reactions: {}
   });
 
   input.value = '';
@@ -55,7 +55,7 @@ function uploadMedia(event) {
         url: mediaURL,
         name: file.name
       },
-      reactions: {} // ← إضافة التفاعلات
+      reactions: {}
     });
     replyData = null;
     removeReplyBox();
@@ -99,27 +99,71 @@ function renderMessage(data, key) {
     content += `<i class="fas fa-trash-alt" onclick="deleteMessage('${key}')" style="float:left; margin-top:5px; color:#888; cursor:pointer;"></i>`;
   }
 
-  content += `
-    <div class="reaction-bar">
-      <span onclick="addReaction('${key}', '😂')">😂</span>
-      <span onclick="addReaction('${key}', '❤️')">❤️</span>
-      <span onclick="addReaction('${key}', '👍')">👍</span>
-    </div>
-  `;
-
+  // تفاعلات
   if (data.reactions) {
     const reactionCounts = {};
-    Object.values(data.reactions).forEach(r => {
-      reactionCounts[r] = (reactionCounts[r] || 0) + 1;
-    });
+    for (const user in data.reactions) {
+      const emoji = data.reactions[user];
+      if (!reactionCounts[emoji]) reactionCounts[emoji] = 0;
+      reactionCounts[emoji]++;
+    }
     const reactionsHTML = Object.entries(reactionCounts).map(([emoji, count]) => `<span>${emoji} ${count}</span>`).join(' ');
     content += `<div class="reactions">${reactionsHTML}</div>`;
   }
 
   msgDiv.innerHTML = content;
+
+  // تفعيل القائمة بالتفاعل عند الضغط المطول
+  msgDiv.addEventListener("touchstart", e => {
+    msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 500);
+  });
+  msgDiv.addEventListener("touchend", e => {
+    clearTimeout(msgDiv.longPressTimer);
+  });
+  msgDiv.addEventListener("mousedown", e => {
+    msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 600);
+  });
+  msgDiv.addEventListener("mouseup", e => {
+    clearTimeout(msgDiv.longPressTimer);
+  });
+
   enableSwipeToReply(msgDiv, data);
   chatBox.appendChild(msgDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function showReactionPopup(element, key) {
+  const existing = document.querySelector(".reaction-popup");
+  if (existing) existing.remove();
+
+  const popup = document.createElement("div");
+  popup.className = "reaction-popup";
+  popup.style.position = "absolute";
+  popup.style.zIndex = 100;
+  popup.style.top = (element.offsetTop - 40) + "px";
+  popup.style.left = (element.offsetLeft + 10) + "px";
+  popup.style.background = "#222";
+  popup.style.borderRadius = "20px";
+  popup.style.padding = "5px 10px";
+  popup.style.display = "flex";
+  popup.style.gap = "10px";
+  popup.style.boxShadow = "0 2px 6px rgba(0,0,0,0.5)";
+
+  ["😂", "❤️", "👍", "😮", "😢", "😡"].forEach(emoji => {
+    const btn = document.createElement("span");
+    btn.textContent = emoji;
+    btn.style.cursor = "pointer";
+    btn.onclick = () => {
+      addReaction(key, emoji);
+      popup.remove();
+    };
+    popup.appendChild(btn);
+  });
+
+  document.body.appendChild(popup);
+  setTimeout(() => {
+    document.addEventListener("click", () => popup.remove(), { once: true });
+  }, 0);
 }
 
 function addReaction(msgKey, emoji) {
