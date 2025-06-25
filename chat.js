@@ -1,9 +1,9 @@
-// chat.js
 const username = localStorage.getItem("username");
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
 const mediaInput = document.getElementById("mediaInput");
 
+// التحقق من تسجيل الدخول
 if (!username) {
   alert("يرجى تسجيل الدخول أولاً");
   window.location.href = "index.html";
@@ -13,6 +13,7 @@ document.getElementById("userDisplay").textContent = username;
 
 let replyData = null;
 
+// إرسال رسالة نصية
 function sendMessage() {
   const msg = input.value.trim();
   if (msg === '') return;
@@ -32,6 +33,7 @@ function sendMessage() {
   input.focus();
 }
 
+// إرسال ميديا (صورة / فيديو)
 function uploadMedia(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -56,6 +58,7 @@ function uploadMedia(event) {
   reader.readAsDataURL(file);
 }
 
+// عرض الرسائل
 function renderMessage(data, key) {
   const msgDiv = document.createElement("div");
   msgDiv.classList.add("message");
@@ -195,7 +198,18 @@ function openFullScreenMedia(url) {
   document.body.appendChild(viewer);
 }
 
-// ✅ إشعارات Firebase Cloud Messaging
+// ✅ تسجيل Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    .then(registration => {
+      console.log("✅ Service Worker تم تسجيله:", registration);
+    })
+    .catch(err => {
+      console.error("❌ فشل تسجيل Service Worker:", err);
+    });
+}
+
+// ✅ إعداد الإشعارات باستخدام FCM
 if ('Notification' in window && firebase.messaging.isSupported()) {
   const messaging = firebase.messaging();
 
@@ -212,6 +226,7 @@ if ('Notification' in window && firebase.messaging.isSupported()) {
     console.error("❌ خطأ في التوكن:", err);
   });
 
+  // استقبال الإشعارات داخل الصفحة
   messaging.onMessage(payload => {
     const { title, body } = payload.notification;
     new Notification(title, {
