@@ -114,5 +114,25 @@ function closePopup() {
 }
 
 </script>
+  <script>
+const typingIndicator = document.getElementById("typingIndicator");
+
+db.ref("typing").on("value", snapshot => {
+  const data = snapshot.val();
+  if (!data) {
+    typingIndicator.textContent = '';
+    return;
+  }
+
+  const typingUsers = Object.keys(data).filter(name => name !== username);
+
+  if (typingUsers.length > 0) {
+    typingIndicator.textContent = `${typingUsers.join(", ")} يكتب...`;
+  } else {
+    typingIndicator.textContent = '';
+  }
+});
+
+</script>
 </body>
 </html>
