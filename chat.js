@@ -2,6 +2,7 @@ const username = localStorage.getItem("username");
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
 const mediaInput = document.getElementById("mediaInput");
+mediaInput.addEventListener("change", uploadMedia);
 
 // التحقق من تسجيل الدخول
 if (!username) {
