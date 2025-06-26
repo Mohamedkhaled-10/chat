@@ -132,28 +132,6 @@ db.ref("typing").on("value", snapshot => {
     typingIndicator.textContent = '';
   }
 });
-
-</script>
-  <script>
-document.addEventListener("click", (e) => {
-  const menu = document.getElementById("mediaMenu");
-  const btn = document.querySelector(".media-btn");
-
-  // نتحقق إن القائمة ظاهرة فعلاً قبل ما نحاول نخفيها
-  if (menu.classList.contains("show")) {
-    // لو الضغط خارج الزر والقائمة، نقفل القائمة
-    if (!menu.contains(e.target) && !btn.contains(e.target)) {
-      menu.classList.remove("show");
-    }
-  }
-});
-</script>
-<script>
-function toggleMediaMenu(e) {
-  e.stopPropagation();
-  const menu = document.getElementById("mediaMenu");
-  menu.classList.toggle("show");
-}
-</script>
+  </script>
 </body>
 </html>
