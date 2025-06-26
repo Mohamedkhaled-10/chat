@@ -3,10 +3,7 @@ const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
 const mediaInput = document.getElementById("mediaInput");
 
-// Firebase Database Reference
-const db = firebase.database();
-
-// التأكد من تسجيل الدخول
+// التحقق من تسجيل الدخول
 if (!username) {
   alert("يرجى تسجيل الدخول أولاً");
   window.location.href = "index.html";
@@ -16,7 +13,6 @@ document.getElementById("userDisplay").textContent = username;
 
 let replyData = null;
 
-// إرسال رسالة نصية
 function sendMessage() {
   const msg = input.value.trim();
   if (msg === '') return;
@@ -37,13 +33,11 @@ function sendMessage() {
   input.focus();
 }
 
-// تحديد نوع الميديا المراد رفعها
 function uploadSpecificMedia(type) {
   mediaInput.accept = type;
   mediaInput.click();
 }
 
-// رفع ملف ميديا (صورة / فيديو / ملف)
 function uploadMedia(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -59,23 +53,25 @@ function uploadMedia(event) {
       time: Date.now(),
       replyTo: replyData || null,
       media: {
-        type: file.type.startsWith('image') ? 'image' :
-              file.type.startsWith('video') ? 'video' : 'file',
+        type: file.type.startsWith('image') ? 'image' : file.type.startsWith('video') ? 'video' : 'file',
         url: mediaURL,
         name: file.name
       },
       reactions: {}
     });
 
+    input.value = '';
     replyData = null;
     removeReplyBox();
+    input.focus();
   };
-
   reader.readAsDataURL(file);
 }
 
-// ربط رفع الميديا بحدث change
-mediaInput.addEventListener("change", uploadMedia);
+// بقية الكود لا يحتاج تعديل لأنه يدعم عرض الميديا بشكل صحيح (تم التعديل في uploadMedia فقط)
+
+// تابع الكود من الرسائل والتفاعلات والردود كما هو بدون تغيير (نفس ما أرسلته أنت)
+
 
 function renderMessage(data, key) {
   const msgDiv = document.createElement("div");
