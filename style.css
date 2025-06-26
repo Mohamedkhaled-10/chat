@@ -76,15 +76,17 @@ header .fa-comment-dots {
 }
 
 .message.me {
-  background: #00c2f2;
-  color: #000;
+  background: #003366;    /* الأزرق الداكن */
+  color: #fff;            /* النص بالأبيض */
   align-self: flex-end;
   border-radius: 16px 16px 16px 0;
 }
 
-.message:hover {
-  background-color: #383838;
+/* إضافة تدرّج لونه عند المرور بالفأرة */
+.message.me:hover {
+  background-color: #002244;
 }
+
 
 .message.me:hover {
   background-color: #00aad1;
