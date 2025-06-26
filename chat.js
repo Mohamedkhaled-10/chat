@@ -312,17 +312,3 @@ function openFullScreenMedia(url) {
   viewer.addEventListener('click', () => viewer.remove());
   document.body.appendChild(viewer);
 }
-
-function toggleMediaMenu() {
-  const menu = document.getElementById("mediaMenu");
-  menu.classList.toggle("show");
-}
-
-document.addEventListener("click", (e) => {
-  const menu = document.getElementById("mediaMenu");
-  const btn = document.querySelector(".media-btn");
-  if (!menu.contains(e.target) && !btn.contains(e.target)) {
-    menu.classList.remove("show");
-  }
-});
-
