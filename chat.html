@@ -121,6 +121,30 @@
         : '';
     });
   </script>
+<script>
+  const chatBox = document.getElementById("chat-box");
+
+  function updateMessageGradients() {
+    const messages = chatBox.querySelectorAll(".message.me");
+
+    messages.forEach(msg => {
+      const rect = msg.getBoundingClientRect();
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const offsetTop = rect.top + scrollTop;
+      const relativeY = (offsetTop - chatBox.scrollTop) / chatBox.clientHeight;
+
+      // احسب درجة اللون حسب موضع الرسالة
+      const hue = 200 + relativeY * 100; // من 200 إلى 300 تقريبًا
+      msg.style.background = `linear-gradient(135deg, hsl(${hue}, 70%, 35%), hsl(${hue + 20}, 70%, 45%))`;
+    });
+  }
+
+  // حدث عند التمرير
+  chatBox.addEventListener("scroll", updateMessageGradients);
+
+  // حدث أول مرة
+  window.addEventListener("load", updateMessageGradients);
+</script>
 
 </body>
 </html>
