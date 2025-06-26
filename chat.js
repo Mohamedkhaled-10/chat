@@ -43,31 +43,61 @@ function uploadMedia(event) {
   const file = event.target.files[0];
   if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const mediaURL = e.target.result;
+  // عرض عنصر مؤقت لشريط التحميل
+  const tempId = Date.now();
+  const tempDiv = document.createElement("div");
+  tempDiv.className = "message me";
+  tempDiv.id = `upload-${tempId}`;
+  tempDiv.innerHTML = `
+    <div class="sender-name">${username}</div>
+    <div class="upload-progress" style="width: 100%; background: #222; border-radius: 8px; overflow: hidden;">
+      <div class="bar" style="width: 0%; height: 10px; background: #00d0ff;"></div>
+    </div>
+    <small>جاري الرفع...</small>
+  `;
+  chatBox.appendChild(tempDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
 
-    db.ref("messages").push({
-      id: Date.now(),
-      sender: username,
-      text: '',
-      time: Date.now(),
-      replyTo: replyData || null,
-      media: {
-        type: file.type.startsWith('image') ? 'image' : file.type.startsWith('video') ? 'video' : 'file',
-        url: mediaURL,
-        name: file.name
-      },
-      reactions: {}
-    });
+  // رفع الميديا إلى Firebase Storage
+  const storageRef = firebase.storage().ref(`uploads/${Date.now()}_${file.name}`);
+  const uploadTask = storageRef.put(file);
 
-    input.value = '';
-    replyData = null;
-    removeReplyBox();
-    input.focus();
-  };
-  reader.readAsDataURL(file);
+  uploadTask.on("state_changed",
+    (snapshot) => {
+      const percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      tempDiv.querySelector(".bar").style.width = `${percent}%`;
+    },
+    (error) => {
+      console.error("فشل رفع الملف:", error);
+      tempDiv.remove();
+      alert("حدث خطأ أثناء رفع الملف.");
+    },
+    () => {
+      uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+        db.ref("messages").push({
+          id: Date.now(),
+          sender: username,
+          text: '',
+          time: Date.now(),
+          replyTo: replyData || null,
+          media: {
+            type: file.type.startsWith('image') ? 'image' : file.type.startsWith('video') ? 'video' : 'file',
+            url: downloadURL,
+            name: file.name
+          },
+          reactions: {}
+        });
+
+        tempDiv.remove();
+        input.value = '';
+        replyData = null;
+        removeReplyBox();
+        input.focus();
+      });
+    }
+  );
 }
+
 
 // بقية الكود لا يحتاج تعديل لأنه يدعم عرض الميديا بشكل صحيح (تم التعديل في uploadMedia فقط)
 
