@@ -25,6 +25,7 @@ window.addEventListener("beforeunload", () => {
   db.ref("typing/" + username).remove();
 });
 
+// رفع الميديا
 mediaInput.addEventListener("change", uploadMedia);
 
 let replyData = null;
@@ -162,14 +163,11 @@ function renderMessage(data, key) {
 
   msgDiv.innerHTML += content;
 
+  // منع القوائم الافتراضية و long-press
   msgDiv.addEventListener("contextmenu", e => e.preventDefault());
-  msgDiv.addEventListener("touchstart", e => {
-    msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 500);
-  });
+  msgDiv.addEventListener("touchstart", e => { msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 500); });
   msgDiv.addEventListener("touchend", e => clearTimeout(msgDiv.longPressTimer));
-  msgDiv.addEventListener("mousedown", e => {
-    msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 600);
-  });
+  msgDiv.addEventListener("mousedown", e => { msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 600); });
   msgDiv.addEventListener("mouseup", e => clearTimeout(msgDiv.longPressTimer));
 
   enableSwipeToReply(msgDiv, data);
@@ -187,7 +185,7 @@ function showReactionPopup(element, key) {
   popup.style = `
     position: fixed;
     top: ${rect.top - 45}px;
-    left: ${rect.left + rect.width / 2 - 100}px;
+    left: ${rect.left + rect.width/2 - 100}px;
     background: #222;
     border-radius: 20px;
     padding: 6px 12px;
@@ -197,118 +195,84 @@ function showReactionPopup(element, key) {
     box-shadow: 0 2px 6px rgba(0,0,0,0.5);
   `;
 
-  ["😂", "❤️", "👍", "😮", "😢", "😡"].forEach(emoji => {
+  ["😂","❤️","👍","😮","😢","😡"].forEach(emoji => {
     const btn = document.createElement("span");
     btn.textContent = emoji;
     btn.style.cursor = "pointer";
     btn.style.fontSize = "20px";
-    btn.onclick = () => {
-      addReaction(key, emoji);
-      popup.remove();
-    };
+    btn.onclick = () => { addReaction(key, emoji); popup.remove(); };
     popup.appendChild(btn);
   });
 
   document.body.appendChild(popup);
-  setTimeout(() => {
-    document.addEventListener("click", () => popup.remove(), { once: true });
-  }, 0);
+  setTimeout(() => { document.addEventListener("click", () => popup.remove(), { once: true }); }, 0);
 }
 
 function addReaction(msgKey, emoji) {
-  const userReactionRef = db.ref(`messages/${msgKey}/reactions/${username}`);
-  userReactionRef.set(emoji);
+  db.ref(`messages/${msgKey}/reactions/${username}`).set(emoji);
 }
 
-db.ref("messages").on("child_added", snapshot => {
-  renderMessage(snapshot.val(), snapshot.key);
-});
-
+// الاستماع للتغييرات في الرسائل
+db.ref("messages").on("child_added", snapshot => { renderMessage(snapshot.val(), snapshot.key); });
 db.ref("messages").on("child_changed", snapshot => {
-  const msgEl = chatBox.querySelector(`[data-key='${snapshot.key}']`);
-  if (msgEl) msgEl.remove();
+  const el = chatBox.querySelector(`[data-key='${snapshot.key}']`);
+  if (el) el.remove();
   renderMessage(snapshot.val(), snapshot.key);
 });
-
 db.ref("messages").on("child_removed", snapshot => {
-  const deletedKey = snapshot.key;
-  const allMessages = chatBox.querySelectorAll('.message');
-  allMessages.forEach(el => {
-    if (el.dataset.key === deletedKey) {
-      el.remove();
-    }
-  });
+  chatBox.querySelectorAll('.message').forEach(el => { if(el.dataset.key === snapshot.key) el.remove(); });
 });
 
 function deleteMessage(key) {
-  if (confirm("هل تريد حذف هذه الرسالة؟")) {
-    db.ref("messages/" + key).remove();
-  }
+  if(confirm("هل تريد حذف هذه الرسالة؟")) db.ref("messages/"+key).remove();
 }
 
 function showReplyBox(name, text) {
   removeReplyBox();
   const replyDiv = document.createElement("div");
   replyDiv.id = "replyBox";
-  replyDiv.innerHTML = `
-    <strong>رداً على ${name}:</strong> ${text}
-    <span onclick="removeReplyBox()" style="float:left; cursor:pointer; color:#f55;"><i class="fas fa-times"></i></span>
-  `;
+  replyDiv.innerHTML = `<strong>رداً على ${name}:</strong> ${text} <span onclick="removeReplyBox()" style="float:left;cursor:pointer;color:#f55;"><i class="fas fa-times"></i></span>`;
   input.parentNode.insertBefore(replyDiv, input);
 }
 
 function removeReplyBox() {
-  const existing = document.getElementById("replyBox");
-  if (existing) existing.remove();
-  replyData = null;
+  const ex = document.getElementById("replyBox"); if(ex) ex.remove(); replyData=null;
 }
 
-function enableSwipeToReply(element, data) {
-  let startX = 0;
-  let moved = false;
-  element.addEventListener('touchstart', e => {
-    startX = e.touches[0].clientX;
-    element.style.transition = 'none';
-  });
-  element.addEventListener('touchmove', e => {
-    const deltaX = e.touches[0].clientX - startX;
-    if (deltaX > 0) {
-      element.style.transform = `translateX(${deltaX}px)`;
-      moved = true;
-    }
-  });
-  element.addEventListener('touchend', e => {
-    const deltaX = e.changedTouches[0].clientX - startX;
-    if (deltaX > 70 && moved) {
-      replyData = {
-        sender: data.sender,
-        text: data.text || '[ميديا]'
-      };
-      showReplyBox(data.sender, data.text || '[ميديا]');
-    }
-    element.style.transition = 'transform 0.3s ease';
-    element.style.transform = 'translateX(0)';
-    moved = false;
+function enableSwipeToReply(el, data) {
+  let startX=0,moved=false;
+  el.addEventListener('touchstart', e=>{ startX=e.touches[0].clientX; el.style.transition='none'; });
+  el.addEventListener('touchmove', e=>{ const dx=e.touches[0].clientX-startX; if(dx>0){ el.style.transform=`translateX(${dx}px)`; moved=true; }});
+  el.addEventListener('touchend', e=>{
+    const dx=e.changedTouches[0].clientX-startX;
+    if(dx>70 && moved){ replyData={sender: data.sender, text: data.text||'[ميديا]'}; showReplyBox(data.sender,data.text||'[ميديا]'); }
+    el.style.transition='transform 0.3s ease'; el.style.transform='translateX(0)'; moved=false;
   });
 }
 
 function openFullScreenMedia(url) {
-  const viewer = document.createElement('div');
-  viewer.style = `
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.95);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  `;
-  const img = document.createElement('img');
-  img.src = url;
-  img.style = 'max-width: 90vw; max-height: 90vh; border-radius: 10px;';
+  const viewer=document.createElement('div');
+  viewer.style=`position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:1000;`;
+  const img=document.createElement('img'); img.src=url; img.style='max-width:90vw;max-height:90vh;border-radius:10px;';
   viewer.appendChild(img);
-  viewer.addEventListener('click', () => viewer.remove());
+  viewer.addEventListener('click',()=>viewer.remove());
   document.body.appendChild(viewer);
 }
+
+// دالة عرض/إخفاء قائمة الميديا
+function toggleMediaMenu(e) {
+  e.stopPropagation(); // يمنع وصول الحدث للـ document العام
+  const menu=document.getElementById("mediaMenu");
+  menu.classList.toggle("show");
+}
+
+// إغلاق القائمة عند الضغط خارجها فقط إذا كانت مفتوحة
+document.addEventListener("click", e => {
+  const menu=document.getElementById("mediaMenu");
+  if(menu.classList.contains("show")){
+    const btn=document.querySelector(".media-btn");
+    if(!menu.contains(e.target) && !btn.contains(e.target)){
+      menu.classList.remove("show");
+    }
+  }
+});
