@@ -2,7 +2,7 @@ const username = localStorage.getItem("username");
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
 const mediaInput = document.getElementById("mediaInput");
-mediaInput.addEventListener("change", uploadMedia);
+let typingTimeout;
 
 // التحقق من تسجيل الدخول
 if (!username) {
@@ -11,6 +11,21 @@ if (!username) {
 }
 
 document.getElementById("userDisplay").textContent = username;
+
+// مؤشر الكتابة
+input.addEventListener("input", () => {
+  db.ref("typing/" + username).set(true);
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    db.ref("typing/" + username).remove();
+  }, 3000);
+});
+
+window.addEventListener("beforeunload", () => {
+  db.ref("typing/" + username).remove();
+});
+
+mediaInput.addEventListener("change", uploadMedia);
 
 let replyData = null;
 
@@ -32,6 +47,9 @@ function sendMessage() {
   replyData = null;
   removeReplyBox();
   input.focus();
+
+  // إزالة حالة الكتابة بعد الإرسال
+  db.ref("typing/" + username).remove();
 }
 
 function uploadSpecificMedia(type) {
@@ -68,11 +86,6 @@ function uploadMedia(event) {
   };
   reader.readAsDataURL(file);
 }
-
-// بقية الكود لا يحتاج تعديل لأنه يدعم عرض الميديا بشكل صحيح (تم التعديل في uploadMedia فقط)
-
-// تابع الكود من الرسائل والتفاعلات والردود كما هو بدون تغيير (نفس ما أرسلته أنت)
-
 
 function renderMessage(data, key) {
   const msgDiv = document.createElement("div");
@@ -153,40 +166,36 @@ function renderMessage(data, key) {
   msgDiv.addEventListener("touchstart", e => {
     msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 500);
   });
-  msgDiv.addEventListener("touchend", e => {
-    clearTimeout(msgDiv.longPressTimer);
-  });
+  msgDiv.addEventListener("touchend", e => clearTimeout(msgDiv.longPressTimer));
   msgDiv.addEventListener("mousedown", e => {
     msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 600);
   });
-  msgDiv.addEventListener("mouseup", e => {
-    clearTimeout(msgDiv.longPressTimer);
-  });
+  msgDiv.addEventListener("mouseup", e => clearTimeout(msgDiv.longPressTimer));
 
   enableSwipeToReply(msgDiv, data);
   chatBox.appendChild(msgDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-
 function showReactionPopup(element, key) {
   const existing = document.querySelector(".reaction-popup");
   if (existing) existing.remove();
 
   const rect = element.getBoundingClientRect();
-
   const popup = document.createElement("div");
   popup.className = "reaction-popup";
-  popup.style.position = "fixed";
-  popup.style.zIndex = 1000;
-  popup.style.top = (rect.top - 45) + "px";
-  popup.style.left = (rect.left + rect.width / 2 - 100) + "px";
-  popup.style.background = "#222";
-  popup.style.borderRadius = "20px";
-  popup.style.padding = "6px 12px";
-  popup.style.display = "flex";
-  popup.style.gap = "12px";
-  popup.style.boxShadow = "0 2px 6px rgba(0,0,0,0.5)";
+  popup.style = `
+    position: fixed;
+    top: ${rect.top - 45}px;
+    left: ${rect.left + rect.width / 2 - 100}px;
+    background: #222;
+    border-radius: 20px;
+    padding: 6px 12px;
+    display: flex;
+    gap: 12px;
+    z-index: 1000;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  `;
 
   ["😂", "❤️", "👍", "😮", "😢", "😡"].forEach(emoji => {
     const btn = document.createElement("span");
@@ -303,68 +312,3 @@ function openFullScreenMedia(url) {
   viewer.addEventListener('click', () => viewer.remove());
   document.body.appendChild(viewer);
 }
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/firebase-messaging-sw.js')
-    .then(registration => {
-      console.log("✅ Service Worker تم تسجيله:", registration);
-    })
-    .catch(err => {
-      console.error("❌ فشل تسجيل Service Worker:", err);
-    });
-}
-
-if ('Notification' in window && firebase.messaging.isSupported()) {
-  const messaging = firebase.messaging();
-
-  messaging.getToken({
-    vapidKey: "BEYdjZSgrbnqsQbu2bfEE89MaEGnksqizHuTNTocbdz9FVeaZruiO0FdeDAzKLN_QYjOZ1TccWNOA_R5ZfS9U0c"
-  }).then(currentToken => {
-    if (currentToken) {
-      db.ref("tokens/" + username).set(currentToken);
-      console.log("🔐 Token:", currentToken);
-    } else {
-      console.warn("🔔 لم يتم منح صلاحية الإشعارات.");
-    }
-  }).catch(err => {
-    console.error("❌ خطأ في التوكن:", err);
-  });
-
-  messaging.onMessage(payload => {
-    const { title, body } = payload.notification;
-    new Notification(title, {
-      body,
-      icon: "/icon.png"
-    });
-  });
-}
-
-function toggleMediaMenu() {
-  const menu = document.querySelector('.media-menu');
-  if (menu.classList.contains('show')) {
-    menu.classList.remove('show');
-  } else {
-    menu.style.bottom = '55px';
-    menu.classList.add('show');
-  }
-}
-
-window.addEventListener('click', (e) => {
-  const menu = document.querySelector('.media-menu');
-  const button = document.querySelector('.media-btn');
-  if (menu && !menu.contains(e.target) && !button.contains(e.target)) {
-    menu.classList.remove('show');
-  }
-});
-
-let typingTimeout;
-
-input.addEventListener("input", () => {
-  db.ref("typing/" + username).set(true);
-
-  clearTimeout(typingTimeout);
-  typingTimeout = setTimeout(() => {
-    db.ref("typing/" + username).remove();
-  }, 3000);
-});
-
