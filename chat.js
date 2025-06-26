@@ -43,14 +43,13 @@ function uploadMedia(event) {
   const file = event.target.files[0];
   if (!file) return;
 
-  // عرض عنصر مؤقت لشريط التحميل
   const tempId = Date.now();
   const tempDiv = document.createElement("div");
   tempDiv.className = "message me";
   tempDiv.id = `upload-${tempId}`;
   tempDiv.innerHTML = `
     <div class="sender-name">${username}</div>
-    <div class="upload-progress" style="width: 100%; background: #222; border-radius: 8px; overflow: hidden;">
+    <div class="upload-progress" style="width: 100%; background: #222; border-radius: 8px; overflow: hidden; margin-top: 5px;">
       <div class="bar" style="width: 0%; height: 10px; background: #00d0ff;"></div>
     </div>
     <small>جاري الرفع...</small>
@@ -58,7 +57,6 @@ function uploadMedia(event) {
   chatBox.appendChild(tempDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
 
-  // رفع الميديا إلى Firebase Storage
   const storageRef = firebase.storage().ref(`uploads/${Date.now()}_${file.name}`);
   const uploadTask = storageRef.put(file);
 
@@ -68,7 +66,7 @@ function uploadMedia(event) {
       tempDiv.querySelector(".bar").style.width = `${percent}%`;
     },
     (error) => {
-      console.error("فشل رفع الملف:", error);
+      console.error("❌ فشل رفع الملف:", error);
       tempDiv.remove();
       alert("حدث خطأ أثناء رفع الملف.");
     },
