@@ -356,3 +356,15 @@ window.addEventListener('click', (e) => {
     menu.classList.remove('show');
   }
 });
+
+let typingTimeout;
+
+input.addEventListener("input", () => {
+  db.ref("typing/" + username).set(true);
+
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    db.ref("typing/" + username).remove();
+  }, 3000);
+});
+
