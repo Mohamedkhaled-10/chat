@@ -3,7 +3,10 @@ const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
 const mediaInput = document.getElementById("mediaInput");
 
-// التحقق من تسجيل الدخول
+// Firebase Database Reference
+const db = firebase.database();
+
+// التأكد من تسجيل الدخول
 if (!username) {
   alert("يرجى تسجيل الدخول أولاً");
   window.location.href = "index.html";
@@ -13,6 +16,7 @@ document.getElementById("userDisplay").textContent = username;
 
 let replyData = null;
 
+// إرسال رسالة نصية
 function sendMessage() {
   const msg = input.value.trim();
   if (msg === '') return;
@@ -33,11 +37,13 @@ function sendMessage() {
   input.focus();
 }
 
+// تحديد نوع الميديا المراد رفعها
 function uploadSpecificMedia(type) {
   mediaInput.accept = type;
   mediaInput.click();
 }
 
+// رفع ملف ميديا (صورة / فيديو / ملف)
 function uploadMedia(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -45,6 +51,7 @@ function uploadMedia(event) {
   const reader = new FileReader();
   reader.onload = function(e) {
     const mediaURL = e.target.result;
+
     db.ref("messages").push({
       id: Date.now(),
       sender: username,
@@ -52,17 +59,23 @@ function uploadMedia(event) {
       time: Date.now(),
       replyTo: replyData || null,
       media: {
-        type: file.type.startsWith('image') ? 'image' : file.type.startsWith('video') ? 'video' : 'file',
+        type: file.type.startsWith('image') ? 'image' :
+              file.type.startsWith('video') ? 'video' : 'file',
         url: mediaURL,
         name: file.name
       },
       reactions: {}
     });
+
     replyData = null;
     removeReplyBox();
   };
+
   reader.readAsDataURL(file);
 }
+
+// ربط رفع الميديا بحدث change
+mediaInput.addEventListener("change", uploadMedia);
 
 function renderMessage(data, key) {
   const msgDiv = document.createElement("div");
