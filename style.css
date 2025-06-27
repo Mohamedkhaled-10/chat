@@ -400,3 +400,92 @@ header .fa-comment-dots {
   background: #00aacc;
 }
 
+/* نافذة الخلفية */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  font-family: 'Cairo', sans-serif;
+  animation: fadeIn 0.3s ease;
+}
+
+/* نافذة التأكيد */
+.popup-box {
+  background: #1e1e1e;
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  width: 90%;
+  max-width: 300px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  animation: slideUp 0.4s ease;
+}
+
+/* الأزرار */
+.popup-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.popup-actions button {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px;
+  transition: background 0.2s ease;
+}
+
+#confirmDeleteBtn {
+  background-color: #e53935;
+  color: white;
+}
+
+#confirmDeleteBtn:hover {
+  background-color: #c62828;
+}
+
+#cancelDeleteBtn {
+  background-color: #333;
+  color: #ccc;
+}
+
+#cancelDeleteBtn:hover {
+  background-color: #444;
+}
+
+/* الأنيميشن */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* دعم الشاشات الصغيرة */
+@media (max-width: 480px) {
+  .popup-box {
+    padding: 15px;
+    width: 95%;
+  }
+
+  .popup-actions button {
+    font-size: 14px;
+  }
+}
