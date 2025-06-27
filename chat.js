@@ -298,11 +298,30 @@ document.addEventListener("click", e => {
 });
 
 function copyMessageText(text) {
-  const decoded = decodeURIComponent(text);
-  navigator.clipboard.writeText(decoded).then(() => {
-    alert("تم نسخ الرسالة!");
-  }).catch(err => {
-    alert("فشل النسخ!");
-    console.error(err);
+  navigator.clipboard.writeText(text).then(() => {
+    showToast("تم نسخ الرسالة");
+  }).catch(() => {
+    showToast("فشل النسخ");
   });
+}
+
+function showToast(msg) {
+  const toast = document.createElement("div");
+  toast.textContent = msg;
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00d0ff;
+    color: #000;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-weight: bold;
+    z-index: 9999;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    animation: fadeInOut 2.5s ease;
+  `;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
 }
