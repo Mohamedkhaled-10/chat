@@ -489,3 +489,28 @@ header .fa-comment-dots {
     font-size: 14px;
   }
 }
+
+.message-text-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.copy-icon {
+  font-size: 14px;
+  color: #bbb;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.copy-icon:hover {
+  color: #00d0ff;
+}
+
+@keyframes fadeInOut {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  10%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  90%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+}
