@@ -1,10 +1,10 @@
+// استرجاع اسم المستخدم من التخزين المحلي
 const username = localStorage.getItem("username");
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
 const mediaInput = document.getElementById("mediaInput");
 let typingTimeout;
 
-// التحقق من تسجيل الدخول
 if (!username) {
   alert("يرجى تسجيل الدخول أولاً");
   window.location.href = "index.html";
@@ -27,7 +27,6 @@ window.addEventListener("beforeunload", () => {
 
 // رفع الميديا
 mediaInput.addEventListener("change", uploadMedia);
-
 let replyData = null;
 
 function sendMessage() {
@@ -48,8 +47,6 @@ function sendMessage() {
   replyData = null;
   removeReplyBox();
   input.focus();
-
-  // إزالة حالة الكتابة بعد الإرسال
   db.ref("typing/" + username).remove();
 }
 
@@ -97,11 +94,7 @@ function renderMessage(data, key) {
   let content = "";
 
   if (data.replyTo) {
-    content += `
-      <div class="reply-box">
-        <strong>${data.replyTo.sender}:</strong>
-        <div style="font-size:13px; color:#bbb;">${(data.replyTo.text || '').slice(0, 60)}</div>
-      </div>`;
+    content += `<div class="reply-box"><strong>${data.replyTo.sender}:</strong><div style="font-size:13px; color:#bbb;">${(data.replyTo.text || '').slice(0, 60)}</div></div>`;
   }
 
   content += `<div class="sender-name">${data.sender}</div>`;
@@ -115,24 +108,20 @@ function renderMessage(data, key) {
       content += `<div class="media"><a href="${data.media.url}" download target="_blank" style="color:#00d0ff;">📄 ${data.media.name || 'تحميل ملف'}</a></div>`;
     }
   } else {
-  const msgText = data.text || '';
-  const parsedText = msgText.replace(
-    /(https?:\/\/[^\s]+)/g,
-    '<a href="$1" target="_blank" style="color:#00d0ff;">$1</a>'
-  );
+    const msgText = data.text || '';
+    const parsedText = msgText.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:#00d0ff;">$1</a>');
 
-  const textContainer = document.createElement("div");
-  textContainer.className = "message-text-wrapper";
-  textContainer.innerHTML = `<div class="message-text">${parsedText}</div>`;
+    const textContainer = document.createElement("div");
+    textContainer.className = "message-text-wrapper";
+    textContainer.innerHTML = `<div class="message-text">${parsedText}</div>`;
 
-  const copyBtn = document.createElement("i");
-  copyBtn.className = "fas fa-copy copy-icon";
-  copyBtn.title = "نسخ الرسالة";
-  copyBtn.onclick = () => copyMessageText(data.text || '');
+    const copyBtn = document.createElement("i");
+    copyBtn.className = "fas fa-copy copy-icon";
+    copyBtn.title = "نسخ الرسالة";
+    copyBtn.onclick = () => copyMessageText(data.text || '');
 
-  textContainer.appendChild(copyBtn);
-  msgDiv.appendChild(textContainer);
-}
+    textContainer.appendChild(copyBtn);
+    msgDiv.appendChild(textContainer);
 
     const urlMatch = msgText.match(/https?:\/\/[^\s]+/);
     if (urlMatch) {
@@ -175,7 +164,6 @@ function renderMessage(data, key) {
 
   msgDiv.innerHTML += content;
 
-  // منع القوائم الافتراضية و long-press
   msgDiv.addEventListener("contextmenu", e => e.preventDefault());
   msgDiv.addEventListener("touchstart", e => { msgDiv.longPressTimer = setTimeout(() => showReactionPopup(msgDiv, key), 500); });
   msgDiv.addEventListener("touchend", e => clearTimeout(msgDiv.longPressTimer));
@@ -186,6 +174,7 @@ function renderMessage(data, key) {
   chatBox.appendChild(msgDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
+
 
 function showReactionPopup(element, key) {
   const existing = document.querySelector(".reaction-popup");
