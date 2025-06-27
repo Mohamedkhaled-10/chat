@@ -115,18 +115,24 @@ function renderMessage(data, key) {
       content += `<div class="media"><a href="${data.media.url}" download target="_blank" style="color:#00d0ff;">📄 ${data.media.name || 'تحميل ملف'}</a></div>`;
     }
   } else {
-const msgText = (data.text || '');
-const parsedText = msgText.replace(
-  /(https?:\/\/[^\s]+)/g,
-  '<a href="$1" target="_blank" style="color:#00d0ff;">$1</a>'
-);
+  const msgText = data.text || '';
+  const parsedText = msgText.replace(
+    /(https?:\/\/[^\s]+)/g,
+    '<a href="$1" target="_blank" style="color:#00d0ff;">$1</a>'
+  );
 
-content += `
-  <div class="message-text">
-    ${parsedText}
-    <i class="fas fa-copy copy-icon" title="نسخ الرسالة" onclick="copyMessageText('${encodeURIComponent(data.text)}')"
-      style="margin-right:8px; font-size:13px; cursor:pointer; color:#999;"></i>
-  </div>`;
+  const textContainer = document.createElement("div");
+  textContainer.className = "message-text-wrapper";
+  textContainer.innerHTML = `<div class="message-text">${parsedText}</div>`;
+
+  const copyBtn = document.createElement("i");
+  copyBtn.className = "fas fa-copy copy-icon";
+  copyBtn.title = "نسخ الرسالة";
+  copyBtn.onclick = () => copyMessageText(data.text || '');
+
+  textContainer.appendChild(copyBtn);
+  msgDiv.appendChild(textContainer);
+}
 
     const urlMatch = msgText.match(/https?:\/\/[^\s]+/);
     if (urlMatch) {
