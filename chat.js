@@ -224,8 +224,22 @@ db.ref("messages").on("child_removed", snapshot => {
 });
 
 function deleteMessage(key) {
-  if(confirm("هل تريد حذف هذه الرسالة؟")) db.ref("messages/"+key).remove();
+  const popup = document.getElementById("deleteConfirmPopup");
+  popup.style.display = "flex";
+
+  const confirmBtn = document.getElementById("confirmDeleteBtn");
+  const cancelBtn = document.getElementById("cancelDeleteBtn");
+
+  const closePopup = () => popup.style.display = "none";
+
+  confirmBtn.onclick = () => {
+    db.ref("messages/" + key).remove();
+    closePopup();
+  };
+
+  cancelBtn.onclick = closePopup;
 }
+
 
 function showReplyBox(name, text) {
   removeReplyBox();
